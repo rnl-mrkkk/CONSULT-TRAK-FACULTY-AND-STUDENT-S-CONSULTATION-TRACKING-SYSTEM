@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultation Records | CONSULT-TRAK</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/dashboard.css">
+    <link rel="stylesheet" href="../../css/faculty.css">
+</head>
+<body data-role="faculty">
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="dashboard.html" class="navbar-brand">
+                <span class="brand-icon">📋</span>
+                <h1 class="brand-name">CONSULT-TRAK</h1>
+            </a>
+            <div class="navbar-user">
+                <div class="user-info">
+                    <span class="user-name" id="userName">Faculty Member</span><br>
+                    <span class="user-role">Computer Science</span>
+                </div>
+                <button class="logout-btn" id="logoutBtn">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item" data-page="dashboard">
+                    <span class="nav-icon">🏠</span>
+                    <span class="nav-label">Dashboard</span>
+                </a>
+                <a href="consultation-requests.html" class="nav-item" data-page="consultation-requests">
+                    <span class="nav-icon">📩</span>
+                    <span class="nav-label">Consultation Requests</span>
+                </a>
+                <a href="availability.html" class="nav-item" data-page="availability">
+                    <span class="nav-icon">⏰</span>
+                    <span class="nav-label">Availability</span>
+                </a>
+                <a href="consultation-records.html" class="nav-item" data-page="consultation-records">
+                    <span class="nav-icon">📝</span>
+                    <span class="nav-label">Consultation Records</span>
+                </a>
+                <a href="history.html" class="nav-item" data-page="history">
+                    <span class="nav-icon">📜</span>
+                    <span class="nav-label">History</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h2 class="page-title">Record Consultation</h2>
+                <p class="page-subtitle">Record details, concerns, and recommendations after a consultation (FR-009)</p>
+            </div>
+
+            <div class="content-card" style="max-width: 720px;">
+                <div class="card-header">
+                    <h3 class="card-title">New Consultation Record</h3>
+                </div>
+                <div class="card-body record-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Student</label>
+                            <input type="text" id="recStudent" class="form-input" placeholder="Enter student name">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Student ID</label>
+                            <input type="text" id="recStudentId" class="form-input" placeholder="STU-000">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Subject / Topic</label>
+                            <input type="text" id="recSubject" class="form-input" placeholder="e.g., Thesis Review">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Date</label>
+                            <input type="date" id="recDate" class="form-input">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Concerns Discussed</label>
+                        <textarea id="recConcerns" class="form-textarea" placeholder="What concerns were discussed during the consultation?"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Recommendations</label>
+                        <textarea id="recRecommendations" class="form-textarea" placeholder="What recommendations were given?"></textarea>
+                    </div>
+                    <button class="action-btn primary" onclick="saveRecord()">Save Consultation Record</button>
+                </div>
+            </div>
+
+            <div class="content-card" style="margin-top: var(--space-xl);">
+                <div class="card-header">
+                    <h3 class="card-title">Recently Recorded Consultations</h3>
+                </div>
+                <div class="card-body no-padding">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Subject</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentRecordsBody">
+                            <!-- Filled by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../../js/script.js"></script>
+    <script src="../../js/faculty.js"></script>
+    <script>
+        function renderRecentRecords() {
+            const records = window.facultyFunctions.getRecords();
+            const recent = records.slice(0, 4);
+            document.getElementById('recentRecordsBody').innerHTML = recent.length ? recent.map(r => `
+                <tr>
+                    <td>${r.student}</td>
+                    <td>${r.subject}</td>
+                    <td>${r.date}</td>
+                    <td><span class="status-badge ${r.status}">${r.status.charAt(0).toUpperCase() + r.status.slice(1)}</span></td>
+                </tr>
+            `).join('') : `<tr><td colspan="4" style="text-align:center; color: var(--color-text-tertiary);">No records yet.</td></tr>`;
+        }
+
+        function saveRecord() {
+            const student = document.getElementById('recStudent').value.trim();
+            const studentId = document.getElementById('recStudentId').value.trim();
+            const subject = document.getElementById('recSubject').value.trim();
+            const date = document.getElementById('recDate').value;
+            const concerns = document.getElementById('recConcerns').value.trim();
+            const recommendations = document.getElementById('recRecommendations').value.trim();
+
+            if (!student || !subject || !concerns) {
+                alert('Please fill in the student, subject, and concerns fields.');
+                return;
+            }
+
+            window.facultyFunctions.saveConsultationRecord({
+                student,
+                studentId: studentId || 'Unknown',
+                subject,
+                date: date || new Date().toISOString().split('T')[0],
+                time: '—',
+                status: 'completed',
+                concerns,
+                recommendations
+            });
+
+            alert('Consultation record saved successfully.');
+
+            document.getElementById('recStudent').value = '';
+            document.getElementById('recStudentId').value = '';
+            document.getElementById('recSubject').value = '';
+            document.getElementById('recDate').value = '';
+            document.getElementById('recConcerns').value = '';
+            document.getElementById('recRecommendations').value = '';
+
+            renderRecentRecords();
+        }
+
+        document.addEventListener('DOMContentLoaded', renderRecentRecords);
+    </script>
+</body>
+</html>

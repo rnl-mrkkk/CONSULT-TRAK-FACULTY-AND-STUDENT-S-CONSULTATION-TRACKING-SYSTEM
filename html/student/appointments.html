@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointments | CONSULT-TRAK</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/dashboard.css">
+    <link rel="stylesheet" href="../../css/student.css">
+</head>
+<body data-role="student">
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="dashboard.html" class="navbar-brand">
+                <span class="brand-icon">📋</span>
+                <h1 class="brand-name">CONSULT-TRAK</h1>
+            </a>
+            <div class="navbar-user">
+                <div class="user-info">
+                    <span class="user-name" id="userName">Student</span><br>
+                    <span class="user-role">Computer Science</span>
+                </div>
+                <button class="logout-btn" id="logoutBtn">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item" data-page="dashboard">
+                    <span class="nav-icon">🏠</span>
+                    <span class="nav-label">Dashboard</span>
+                </a>
+                <a href="faculty-availability.html" class="nav-item" data-page="faculty-availability">
+                    <span class="nav-icon">⏰</span>
+                    <span class="nav-label">Faculty Availability</span>
+                </a>
+                <a href="my-requests.html" class="nav-item" data-page="my-requests">
+                    <span class="nav-icon">📝</span>
+                    <span class="nav-label">My Requests</span>
+                </a>
+                <a href="appointments.html" class="nav-item" data-page="appointments">
+                    <span class="nav-icon">📅</span>
+                    <span class="nav-label">Appointments</span>
+                </a>
+                <a href="history.html" class="nav-item" data-page="history">
+                    <span class="nav-icon">📜</span>
+                    <span class="nav-label">History</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h2 class="page-title">My Appointments</h2>
+                <p class="page-subtitle">Track the status of your requests and appointments (FR-008)</p>
+            </div>
+
+            <div id="appointmentsList">
+                <!-- Filled by JS -->
+            </div>
+        </main>
+    </div>
+
+    <script src="../../js/script.js"></script>
+    <script src="../../js/student.js"></script>
+    <script>
+        function renderAppointments() {
+            const appointments = window.studentFunctions.getAppointments();
+            const list = document.getElementById('appointmentsList');
+
+            if (appointments.length === 0) {
+                list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📅</div><div class="empty-state-title">No appointments yet</div><div class="empty-state-text">Submit a consultation request to get started.</div></div>`;
+                return;
+            }
+
+            list.innerHTML = appointments.map(a => `
+                <div class="appointment-card ${a.status}">
+                    <div class="appointment-header">
+                        <div class="appointment-faculty">${a.faculty}</div>
+                        <span class="status-badge ${a.status}">${a.status.charAt(0).toUpperCase() + a.status.slice(1)}</span>
+                    </div>
+                    <div class="appointment-details">
+                        <span>📝 ${a.subject}</span>
+                        <span>📅 ${a.date}</span>
+                        <span>⏰ ${a.time}</span>
+                        ${a.location ? `<span>📍 ${a.location}</span>` : ''}
+                    </div>
+                    ${a.status === 'accepted' ? `<button class="action-btn danger sm" onclick="cancelAppointment(${a.id})">Cancel Appointment</button>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function cancelAppointment(id) {
+            if (confirm('Cancel this appointment?')) {
+                if (window.studentFunctions.cancelAppointment(id)) {
+                    alert('Appointment cancelled.');
+                    renderAppointments();
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', renderAppointments);
+    </script>
+</body>
+</html>

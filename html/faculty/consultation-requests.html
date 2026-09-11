@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultation Requests | CONSULT-TRAK</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/dashboard.css">
+    <link rel="stylesheet" href="../../css/faculty.css">
+</head>
+<body data-role="faculty">
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="dashboard.html" class="navbar-brand">
+                <span class="brand-icon">📋</span>
+                <h1 class="brand-name">CONSULT-TRAK</h1>
+            </a>
+            <div class="navbar-user">
+                <div class="user-info">
+                    <span class="user-name" id="userName">Faculty Member</span><br>
+                    <span class="user-role">Computer Science</span>
+                </div>
+                <button class="logout-btn" id="logoutBtn">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item" data-page="dashboard">
+                    <span class="nav-icon">🏠</span>
+                    <span class="nav-label">Dashboard</span>
+                </a>
+                <a href="consultation-requests.html" class="nav-item" data-page="consultation-requests">
+                    <span class="nav-icon">📩</span>
+                    <span class="nav-label">Consultation Requests</span>
+                </a>
+                <a href="availability.html" class="nav-item" data-page="availability">
+                    <span class="nav-icon">⏰</span>
+                    <span class="nav-label">Availability</span>
+                </a>
+                <a href="consultation-records.html" class="nav-item" data-page="consultation-records">
+                    <span class="nav-icon">📝</span>
+                    <span class="nav-label">Consultation Records</span>
+                </a>
+                <a href="history.html" class="nav-item" data-page="history">
+                    <span class="nav-icon">📜</span>
+                    <span class="nav-label">History</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h2 class="page-title">Consultation Requests</h2>
+                <p class="page-subtitle">View, accept, or reject student consultation requests (FR-004)</p>
+            </div>
+
+            <div id="requestsList">
+                <!-- Filled by JS -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Reject Modal -->
+    <div id="rejectModal" class="modal-overlay" hidden>
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Reject Request</h3>
+                <button class="modal-close" onclick="closeRejectModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="rejectRequestId">
+                <div class="form-group">
+                    <label class="form-label">Reason for Rejection</label>
+                    <textarea id="rejectReason" class="form-textarea" placeholder="Explain why this request is being rejected..."></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button class="action-btn secondary" onclick="closeRejectModal()">Cancel</button>
+                    <button class="action-btn danger" onclick="confirmReject()">Reject Request</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/script.js"></script>
+    <script src="../../js/faculty.js"></script>
+    <script>
+        let requests = [];
+
+        function renderRequests() {
+            const list = document.getElementById('requestsList');
+            requests = window.facultyFunctions.getAllRequests();
+
+            if (requests.length === 0) {
+                list.innerHTML = `<div class="empty-state">
+                    <div class="empty-state-icon">📭</div>
+                    <div class="empty-state-title">No requests</div>
+                    <div class="empty-state-text">There are no consultation requests right now.</div>
+                </div>`;
+                return;
+            }
+
+            list.innerHTML = requests.map(r => `
+                <div class="request-card">
+                    <div class="request-header">
+                        <div>
+                            <div class="request-student">${r.student} <span class="stat-label">(${r.studentId})</span></div>
+                            <div class="request-subject">${r.subject} · Sent ${r.submittedAt}</div>
+                        </div>
+                        <span class="status-badge ${r.status}">${r.status.charAt(0).toUpperCase() + r.status.slice(1)}</span>
+                    </div>
+                    <div class="request-concern">"${r.concern}"</div>
+                    <div class="request-meta">
+                        <span>📅 ${r.preferredDate}</span>
+                        <span>⏰ ${r.preferredTime}</span>
+                        <span>✉️ ${r.email}</span>
+                    </div>
+                    ${r.status === 'rejected' && r.rejectionReason ? `<div class="request-meta"><span style="color: var(--color-error);">Rejected: ${r.rejectionReason}</span></div>` : ''}
+                    ${r.status === 'pending' ? `
+                    <div class="request-actions">
+                        <button class="action-btn success" onclick="handleAccept(${r.id})">✓ Accept</button>
+                        <button class="action-btn danger" onclick="openRejectModal(${r.id})">✕ Reject</button>
+                    </div>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function handleAccept(id) {
+            if (window.facultyFunctions.acceptRequest(id)) {
+                alert('Request accepted. The student will be notified.');
+                renderRequests();
+            }
+        }
+
+        function openRejectModal(id) {
+            document.getElementById('rejectRequestId').value = id;
+            document.getElementById('rejectReason').value = '';
+            document.getElementById('rejectModal').hidden = false;
+        }
+
+        function closeRejectModal() {
+            document.getElementById('rejectModal').hidden = true;
+        }
+
+        function confirmReject() {
+            const id = parseInt(document.getElementById('rejectRequestId').value);
+            const reason = document.getElementById('rejectReason').value.trim() || 'No reason provided';
+            if (window.facultyFunctions.rejectRequest(id, reason)) {
+                closeRejectModal();
+                renderRequests();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', renderRequests);
+    </script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CONSULT-TRAK</title>
+    <style>
+        body { font-family: Poppins, sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background: linear-gradient(135deg, #5c1018 0%, #8a1a28 50%, #a32030 100%); color: #fff; }
+        .loader { text-align: center; }
+        .loader h1 { letter-spacing: -0.02em; margin: 0 0 1rem; }
+    </style>
+</head>
+<body>
+    <div class="loader">
+        <h1>CONSULT-TRAK</h1>
+        <p>Redirecting...</p>
+    </div>
+    <script src="js/script.js"></script>
+    <script>
+        // Auto-redirect to the right page based on session
+        document.addEventListener('DOMContentLoaded', function () {
+            var user = window.getCurrentUser();
+            if (user && user.role) {
+                window.location.replace('html/' + user.role + '/dashboard.html');
+            } else {
+                window.location.replace('html/login.html');
+            }
+        });
+    </script>
+</body>
+</html>

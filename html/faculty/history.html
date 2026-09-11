@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History | CONSULT-TRAK</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/dashboard.css">
+    <link rel="stylesheet" href="../../css/faculty.css">
+</head>
+<body data-role="faculty">
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="dashboard.html" class="navbar-brand">
+                <span class="brand-icon">📋</span>
+                <h1 class="brand-name">CONSULT-TRAK</h1>
+            </a>
+            <div class="navbar-user">
+                <div class="user-info">
+                    <span class="user-name" id="userName">Faculty Member</span><br>
+                    <span class="user-role">Computer Science</span>
+                </div>
+                <button class="logout-btn" id="logoutBtn">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item" data-page="dashboard">
+                    <span class="nav-icon">🏠</span>
+                    <span class="nav-label">Dashboard</span>
+                </a>
+                <a href="consultation-requests.html" class="nav-item" data-page="consultation-requests">
+                    <span class="nav-icon">📩</span>
+                    <span class="nav-label">Consultation Requests</span>
+                </a>
+                <a href="availability.html" class="nav-item" data-page="availability">
+                    <span class="nav-icon">⏰</span>
+                    <span class="nav-label">Availability</span>
+                </a>
+                <a href="consultation-records.html" class="nav-item" data-page="consultation-records">
+                    <span class="nav-icon">📝</span>
+                    <span class="nav-label">Consultation Records</span>
+                </a>
+                <a href="history.html" class="nav-item" data-page="history">
+                    <span class="nav-icon">📜</span>
+                    <span class="nav-label">History</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h2 class="page-title">Consultation History</h2>
+                <p class="page-subtitle">Completed, cancelled, and pending consultations (FR-010)</p>
+            </div>
+
+            <div class="filter-bar">
+                <select id="statusFilter" class="form-select">
+                    <option value="all">All Status</option>
+                    <option value="completed">Completed</option>
+                    <option value="pending">Pending</option>
+                    <option value="cancelled">Cancelled</option>
+                    <option value="rejected">Rejected</option>
+                </select>
+            </div>
+
+            <div class="content-card">
+                <div class="card-header">
+                    <h3 class="card-title">All Consultations</h3>
+                    <span class="stat-label" id="historyCount"></span>
+                </div>
+                <div class="card-body no-padding">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Subject</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Status</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyBody">
+                            <!-- Filled by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../../js/script.js"></script>
+    <script src="../../js/faculty.js"></script>
+    <script>
+        function renderHistory() {
+            const records = window.facultyFunctions.getRecords();
+            const requests = window.facultyFunctions.getAllRequests();
+            const statusFilter = document.getElementById('statusFilter').value;
+
+            // Combine records and requests into a unified history listing
+            const combined = [
+                ...records.map(r => ({
+                    student: r.student,
+                    subject: r.subject,
+                    date: r.date,
+                    time: r.time,
+                    status: r.status,
+                    detail: r.concerns || r.cancellationReason || ''
+                })),
+                ...requests.filter(r => r.status === 'pending' || r.status === 'rejected').map(r => ({
+                    student: r.student,
+                    subject: r.subject,
+                    date: r.preferredDate,
+                    time: r.preferredTime,
+                    status: r.status,
+                    detail: r.rejectionReason || r.concern
+                }))
+            ];
+
+            const filtered = statusFilter === 'all' ? combined : combined.filter(c => c.status === statusFilter);
+            document.getElementById('historyCount').textContent = filtered.length + ' consultation(s)';
+
+            document.getElementById('historyBody').innerHTML = filtered.length ? filtered.map(c => `
+                <tr>
+                    <td>${c.student}</td>
+                    <td>${c.subject}</td>
+                    <td>${c.date}</td>
+                    <td>${c.time}</td>
+                    <td><span class="status-badge ${c.status}">${c.status.charAt(0).toUpperCase() + c.status.slice(1)}</span></td>
+                    <td>${c.detail || '—'}</td>
+                </tr>
+            `).join('') : `<tr><td colspan="6" style="text-align:center; color: var(--color-text-tertiary);">No consultations found.</td></tr>`;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('statusFilter').addEventListener('change', renderHistory);
+            renderHistory();
+        });
+    </script>
+</body>
+</html>

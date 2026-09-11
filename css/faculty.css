@@ -1,0 +1,188 @@
+/* ========================================
+   Faculty-specific styles
+   ======================================== */
+
+/* Faculty stats accent */
+.stat-card.faculty {
+    border-top: 3px solid var(--color-success);
+}
+
+/* Availability grid */
+.availability-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--space-lg);
+}
+
+.availability-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    transition: all var(--transition-base);
+}
+
+.availability-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.availability-card.disabled {
+    opacity: 0.6;
+    background: var(--color-surface-hover);
+}
+
+.availability-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-md);
+}
+
+.availability-day {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--color-text-primary);
+}
+
+.availability-time {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+}
+
+.availability-toggle {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+}
+
+/* Request cards */
+.request-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    margin-bottom: var(--space-md);
+}
+
+.request-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--space-md);
+}
+
+.request-student {
+    font-weight: 600;
+    color: var(--color-text-primary);
+}
+
+.request-subject {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+}
+
+.request-concern {
+    background: var(--color-surface-hover);
+    padding: var(--space-md);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-md);
+    font-style: italic;
+    color: var(--color-text-secondary);
+}
+
+.request-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-lg);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-tertiary);
+}
+
+.request-actions {
+    display: flex;
+    gap: var(--space-sm);
+    margin-top: var(--space-md);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--color-border-light);
+}
+
+/* Record form */
+.record-form .form-group {
+    margin-bottom: var(--space-lg);
+}
+
+.record-form .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-lg);
+}
+
+@media (max-width: 640px) {
+    .record-form .form-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Schedule */
+.schedule-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.schedule-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-lg);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+}
+
+.schedule-time {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--color-primary);
+    min-width: 100px;
+}
+
+.schedule-details {
+    flex: 1;
+}
+
+.schedule-student {
+    font-weight: 500;
+    color: var(--color-text-primary);
+}
+
+.schedule-subject {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+}
+
+.schedule-status {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-pill);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+}
+
+.schedule-status.scheduled {
+    background: rgba(37, 99, 235, 0.1);
+    color: var(--color-info);
+}
+
+.schedule-status.completed {
+    background: rgba(45, 122, 62, 0.1);
+    color: var(--color-success);
+}
+
+.schedule-status.open {
+    background: rgba(217, 119, 6, 0.1);
+    color: var(--color-warning);
+}

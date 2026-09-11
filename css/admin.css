@@ -1,0 +1,119 @@
+/* ========================================
+   Admin-specific styles
+   ======================================== */
+
+/* Admin stats accent */
+.stat-card.admin {
+    border-top: 3px solid var(--color-primary);
+}
+
+/* Account management specific */
+.account-status-toggle {
+    display: flex;
+    gap: var(--space-sm);
+}
+
+/* Report charts */
+.chart-container {
+    padding: var(--space-xl);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-lg);
+}
+
+.chart-bar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    margin-bottom: var(--space-md);
+}
+
+.chart-label {
+    width: 140px;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.chart-track {
+    flex: 1;
+    height: 24px;
+    background: var(--color-surface-hover);
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+}
+
+.chart-fill {
+    height: 100%;
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+    border-radius: var(--radius-pill);
+    transition: width 0.6s ease;
+}
+
+.chart-value {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--color-text-primary);
+    min-width: 40px;
+}
+
+/* Activity feed */
+.activity-feed {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.activity-item {
+    display: flex;
+    gap: var(--space-md);
+    padding: var(--space-md);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-md);
+}
+
+.activity-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    margin-top: 6px;
+    flex-shrink: 0;
+}
+
+.activity-content {
+    flex: 1;
+}
+
+.activity-title {
+    font-weight: 500;
+    color: var(--color-text-primary);
+    margin-bottom: 2px;
+}
+
+.activity-meta {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-tertiary);
+}
+
+/* Admin table enhancements */
+.admin-table-actions {
+    display: flex;
+    gap: var(--space-xs);
+}
+
+/* Filter controls */
+.filter-bar {
+    display: flex;
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg);
+    flex-wrap: wrap;
+}
+
+.filter-bar .form-input,
+.filter-bar .form-select {
+    max-width: 260px;
+}

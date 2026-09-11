@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard | CONSULT-TRAK</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/dashboard.css">
+    <link rel="stylesheet" href="../../css/student.css">
+</head>
+<body data-role="student">
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="dashboard.html" class="navbar-brand">
+                <span class="brand-icon">📋</span>
+                <h1 class="brand-name">CONSULT-TRAK</h1>
+            </a>
+            <div class="navbar-user">
+                <div class="user-info">
+                    <span class="user-name" id="userName">Student</span><br>
+                    <span class="user-role">Computer Science</span>
+                </div>
+                <button class="logout-btn" id="logoutBtn">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item" data-page="dashboard">
+                    <span class="nav-icon">🏠</span>
+                    <span class="nav-label">Dashboard</span>
+                </a>
+                <a href="faculty-availability.html" class="nav-item" data-page="faculty-availability">
+                    <span class="nav-icon">⏰</span>
+                    <span class="nav-label">Faculty Availability</span>
+                </a>
+                <a href="my-requests.html" class="nav-item" data-page="my-requests">
+                    <span class="nav-icon">📝</span>
+                    <span class="nav-label">My Requests</span>
+                </a>
+                <a href="appointments.html" class="nav-item" data-page="appointments">
+                    <span class="nav-icon">📅</span>
+                    <span class="nav-label">Appointments</span>
+                </a>
+                <a href="history.html" class="nav-item" data-page="history">
+                    <span class="nav-icon">📜</span>
+                    <span class="nav-label">History</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h2 class="page-title">Student Dashboard</h2>
+                <p class="page-subtitle">Track your consultations and appointments</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card student">
+                    <div class="stat-header">
+                        <div class="stat-icon warning">⏳</div>
+                    </div>
+                    <div class="stat-value" id="pendingRequests">2</div>
+                    <div class="stat-label">Pending Requests</div>
+                </div>
+                <div class="stat-card student">
+                    <div class="stat-header">
+                        <div class="stat-icon info">📅</div>
+                    </div>
+                    <div class="stat-value" id="upcomingAppointments">3</div>
+                    <div class="stat-label">Upcoming Appointments</div>
+                </div>
+                <div class="stat-card student">
+                    <div class="stat-header">
+                        <div class="stat-icon success">✅</div>
+                    </div>
+                    <div class="stat-value" id="completedConsultations">8</div>
+                    <div class="stat-label">Completed Consultations</div>
+                </div>
+                <div class="stat-card student">
+                    <div class="stat-header">
+                        <div class="stat-icon primary">👨‍🏫</div>
+                    </div>
+                    <div class="stat-value" id="facultyCount">4</div>
+                    <div class="stat-label">Available Faculty</div>
+                </div>
+            </div>
+
+            <!-- Upcoming Appointments -->
+            <div class="content-card">
+                <div class="card-header">
+                    <h3 class="card-title">My Upcoming Appointments</h3>
+                    <button class="action-btn secondary sm" onclick="location.href='appointments.html'">View All</button>
+                </div>
+                <div class="card-body" id="upcomingList">
+                    <!-- Filled by JS -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../../js/script.js"></script>
+    <script src="../../js/student.js"></script>
+    <script>
+        function renderStudentDashboard() {
+            const stats = window.studentFunctions.getStats();
+            document.getElementById('pendingRequests').textContent = stats.pendingRequests;
+            document.getElementById('upcomingAppointments').textContent = stats.upcomingAppointments;
+            document.getElementById('completedConsultations').textContent = stats.completedConsultations;
+            document.getElementById('facultyCount').textContent = new Set(window.studentFunctions.getFacultyAvailability().map(f => f.faculty)).size;
+
+            const appointments = window.studentFunctions.getAppointments().filter(a => a.status === 'accepted' || a.status === 'pending');
+            const list = document.getElementById('upcomingList');
+            list.innerHTML = appointments.length ? appointments.map(a => `
+                <div class="schedule-item">
+                    <div class="schedule-time">${a.date}</div>
+                    <div class="schedule-details">
+                        <div class="schedule-student">${a.subject}</div>
+                        <div class="schedule-subject">${a.faculty} · ${a.time}</div>
+                    </div>
+                    <span class="status-badge ${a.status}">${a.status.charAt(0).toUpperCase() + a.status.slice(1)}</span>
+                </div>
+            `).join('') : `<div class="empty-state"><div class="empty-state-icon">📅</div><div class="empty-state-title">No upcoming appointments</div><div class="empty-state-text">Browse faculty availability to book a consultation.</div></div>`;
+        }
+        document.addEventListener('DOMContentLoaded', renderStudentDashboard);
+    </script>
+</body>
+</html>

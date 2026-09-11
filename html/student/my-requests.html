@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Requests | CONSULT-TRAK</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/dashboard.css">
+    <link rel="stylesheet" href="../../css/student.css">
+</head>
+<body data-role="student">
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="dashboard.html" class="navbar-brand">
+                <span class="brand-icon">📋</span>
+                <h1 class="brand-name">CONSULT-TRAK</h1>
+            </a>
+            <div class="navbar-user">
+                <div class="user-info">
+                    <span class="user-name" id="userName">Student</span><br>
+                    <span class="user-role">Computer Science</span>
+                </div>
+                <button class="logout-btn" id="logoutBtn">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item" data-page="dashboard">
+                    <span class="nav-icon">🏠</span>
+                    <span class="nav-label">Dashboard</span>
+                </a>
+                <a href="faculty-availability.html" class="nav-item" data-page="faculty-availability">
+                    <span class="nav-icon">⏰</span>
+                    <span class="nav-label">Faculty Availability</span>
+                </a>
+                <a href="my-requests.html" class="nav-item" data-page="my-requests">
+                    <span class="nav-icon">📝</span>
+                    <span class="nav-label">My Requests</span>
+                </a>
+                <a href="appointments.html" class="nav-item" data-page="appointments">
+                    <span class="nav-icon">📅</span>
+                    <span class="nav-label">Appointments</span>
+                </a>
+                <a href="history.html" class="nav-item" data-page="history">
+                    <span class="nav-icon">📜</span>
+                    <span class="nav-label">History</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h2 class="page-title">Submit Consultation Request</h2>
+                <p class="page-subtitle">Request a consultation with your preference and concern (FR-003)</p>
+            </div>
+
+            <div class="content-card request-form">
+                <div class="card-header">
+                    <h3 class="card-title">New Request</h3>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label class="form-label">Select Faculty</label>
+                        <select id="reqFaculty" class="form-select">
+                            <option value="">— Select a faculty member —</option>
+                            <!-- Filled by JS -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Concern / Topic</label>
+                        <input type="text" id="reqSubject" class="form-input" placeholder="e.g., Course Advising, Thesis Review">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Describe your concern</label>
+                        <textarea id="reqConcern" class="form-textarea" placeholder="Explain what you'd like to discuss..."></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Preferred Date</label>
+                            <input type="date" id="reqDate" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Preferred Time</label>
+                            <input type="time" id="reqTime" class="form-input">
+                        </div>
+                    </div>
+                    <button class="action-btn primary" onclick="submitRequest()">Submit Request</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../../js/script.js"></script>
+    <script src="../../js/student.js"></script>
+    <script>
+        function formatTime(t) {
+            if (!t) return '';
+            const [h, m] = t.split(':').map(Number);
+            if (isNaN(h)) return t;
+            const period = h >= 12 ? 'PM' : 'AM';
+            const hour = ((h + 11) % 12) + 1;
+            return `${hour}:${m.toString().padStart(2, '0')} ${period}`;
+        }
+
+        function populateFaculty() {
+            const select = document.getElementById('reqFaculty');
+            const faculty = [...new Set(window.studentFunctions.getAllFaculty().map(f => f.faculty))];
+            select.innerHTML = '<option value="">— Select a faculty member —</option>' +
+                faculty.map(f => `<option value="${f}">${f}</option>`).join('');
+        }
+
+        function submitRequest() {
+            const faculty = document.getElementById('reqFaculty').value;
+            const subject = document.getElementById('reqSubject').value.trim();
+            const concern = document.getElementById('reqConcern').value.trim();
+            const date = document.getElementById('reqDate').value;
+            const time = document.getElementById('reqTime').value;
+
+            if (!faculty) { alert('Please select a faculty member.'); return; }
+            if (!subject) { alert('Please enter a concern or topic.'); return; }
+            if (!concern) { alert('Please describe your concern.'); return; }
+            if (!date) { alert('Please choose a preferred date.'); return; }
+
+            const newId = window.studentFunctions.submitRequest({
+                faculty,
+                subject,
+                concern,
+                preferredDate: date,
+                preferredTime: formatTime(time),
+                status: 'pending'
+            });
+
+            alert('Consultation request submitted successfully! You can track its status in My Requests.');
+            window.location.href = 'my-requests.html';
+        }
+
+        // Pre-fill from query params if coming from Faculty Availability
+        function prefillFromQuery() {
+            const params = new URLSearchParams(window.location.search);
+            const faculty = params.get('faculty');
+            const time = params.get('time');
+            if (faculty) document.getElementById('reqFaculty').value = faculty;
+            if (time) document.getElementById('reqDate').value = params.get('day') || '';
+            if (time) document.getElementById('reqTime').value = params.get('time') || '';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            populateFaculty();
+            prefillFromQuery();
+        });
+    </script>
+</body>
+</html>

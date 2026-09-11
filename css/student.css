@@ -1,0 +1,154 @@
+/* ========================================
+   Student-specific styles
+   ======================================== */
+
+/* Student stats accent */
+.stat-card.student {
+    border-top: 3px solid var(--color-info);
+}
+
+/* Faculty availability table */
+.faculty-availability-table th:nth-child(2),
+.faculty-availability-table td:nth-child(2) {
+    min-width: 180px;
+}
+
+/* Book slot buttons in availability */
+.book-slot-btn {
+    padding: var(--space-xs) var(--space-md);
+    background: var(--color-info);
+    color: var(--color-text-inverse);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    cursor: pointer;
+    transition: background var(--transition-fast);
+}
+
+.book-slot-btn:hover {
+    background: #1d4ed8;
+}
+
+.book-slot-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Request form */
+.request-form {
+    max-width: 640px;
+}
+
+.request-form .form-group {
+    margin-bottom: var(--space-lg);
+}
+
+/* Availability list for students */
+.availability-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.availability-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding: var(--space-lg);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    flex-wrap: wrap;
+}
+
+.availability-faculty {
+    font-weight: 600;
+    color: var(--color-text-primary);
+    min-width: 200px;
+}
+
+.availability-detail {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+}
+
+/* Appointment cards */
+.appointment-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    margin-bottom: var(--space-md);
+    border-left: 4px solid var(--color-primary);
+}
+
+.appointment-card.accepted {
+    border-left-color: var(--color-success);
+}
+
+.appointment-card.pending {
+    border-left-color: var(--color-warning);
+}
+
+.appointment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--space-sm);
+}
+
+.appointment-faculty {
+    font-weight: 600;
+    color: var(--color-text-primary);
+}
+
+.appointment-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-lg);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-sm);
+}
+
+/* History timeline */
+.history-timeline {
+    position: relative;
+    padding-left: var(--space-xl);
+}
+
+.history-timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--color-border);
+}
+
+.history-item {
+    position: relative;
+    padding-bottom: var(--space-xl);
+}
+
+.history-item::before {
+    content: '';
+    position: absolute;
+    left: calc(-1 * var(--space-xl) + 4px);
+    top: 4px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    border: 2px solid var(--color-surface);
+}
+
+.history-item.completed::before {
+    background: var(--color-success);
+}
+
+.history-item.cancelled::before {
+    background: var(--color-error);
+}

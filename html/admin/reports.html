@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports | CONSULT-TRAK</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/dashboard.css">
+    <link rel="stylesheet" href="../../css/admin.css">
+</head>
+<body data-role="admin">
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="dashboard.html" class="navbar-brand">
+                <span class="brand-icon">📋</span>
+                <h1 class="brand-name">CONSULT-TRAK</h1>
+            </a>
+            <div class="navbar-user">
+                <div class="user-info">
+                    <span class="user-name" id="userName">Administrator</span><br>
+                    <span class="user-role">System Admin</span>
+                </div>
+                <button class="logout-btn" id="logoutBtn">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item" data-page="dashboard">
+                    <span class="nav-icon">🏠</span>
+                    <span class="nav-label">Dashboard</span>
+                </a>
+                <a href="manage-accounts.html" class="nav-item" data-page="manage-accounts">
+                    <span class="nav-icon">👥</span>
+                    <span class="nav-label">Manage Accounts</span>
+                </a>
+                <a href="consultation-records.html" class="nav-item" data-page="consultation-records">
+                    <span class="nav-icon">📑</span>
+                    <span class="nav-label">Consultation Records</span>
+                </a>
+                <a href="reports.html" class="nav-item" data-page="reports">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-label">Reports</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h2 class="page-title">Reports</h2>
+                <p class="page-subtitle">Generate consultation reports and summaries (FR-012)</p>
+            </div>
+
+            <div class="filter-bar">
+                <select id="periodFilter" class="form-select">
+                    <option value="week">This Week</option>
+                    <option value="month">This Month</option>
+                    <option value="semester">This Semester</option>
+                </select>
+                <button class="action-btn primary" onclick="alert('Report generated and ready for export.')">Generate Report</button>
+            </div>
+
+            <!-- Consultation Status Chart -->
+            <div class="chart-container">
+                <h3 class="card-title" style="margin-bottom: var(--space-lg);">Consultations by Status</h3>
+                <div id="statusChart"><!-- Filled by JS --></div>
+            </div>
+
+            <!-- Consultations by Faculty Chart -->
+            <div class="chart-container">
+                <h3 class="card-title" style="margin-bottom: var(--space-lg);">Consultations by Faculty</h3>
+                <div id="facultyChart"><!-- Filled by JS --></div>
+            </div>
+
+            <!-- Summary Table -->
+            <div class="content-card">
+                <div class="card-header">
+                    <h3 class="card-title">Summary</h3>
+                </div>
+                <div class="card-body no-padding">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Facility</th>
+                                <th>Total Consultations</th>
+                                <th>Completed</th>
+                                <th>Pending</th>
+                            </tr>
+                        </thead>
+                        <tbody id="summaryBody">
+                            <!-- Filled by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../../js/script.js"></script>
+    <script src="../../js/admin.js"></script>
+    <script>
+        function renderReports() {
+            const data = window.adminFunctions.getReportData();
+
+            // Build status chart
+            const statusLabels = { completed: 'Completed', pending: 'Pending', cancelled: 'Cancelled' };
+            const maxStatus = Math.max(...Object.values(data.statusCounts), 1);
+            document.getElementById('statusChart').innerHTML = Object.entries(data.statusCounts).map(([status, count]) => `
+                <div class="chart-bar">
+                    <div class="chart-label">${statusLabels[status]}</div>
+                    <div class="chart-track">
+                        <div class="chart-fill" style="width: ${(count / maxStatus * 100)}%"></div>
+                    </div>
+                    <div class="chart-value">${count}</div>
+                </div>
+            `).join('');
+
+            // Build faculty chart
+            const facultyEntries = Object.entries(data.facultyConsultations);
+            const maxFaculty = Math.max(...facultyEntries.map(e => e[1]), 1);
+            document.getElementById('facultyChart').innerHTML = facultyEntries.map(([faculty, count]) => `
+                <div class="chart-bar">
+                    <div class="chart-label">${faculty}</div>
+                    <div class="chart-track">
+                        <div class="chart-fill" style="width: ${(count / maxFaculty * 100)}%"></div>
+                    </div>
+                    <div class="chart-value">${count}</div>
+                </div>
+            `).join('');
+
+            // Build summary table
+            const records = window.adminFunctions.getConsultationData();
+            const byFaculty = {};
+            records.forEach(r => {
+                if (!byFaculty[r.faculty]) {
+                    byFaculty[r.faculty] = { total: 0, completed: 0, pending: 0 };
+                }
+                byFaculty[r.faculty].total++;
+                if (r.status === 'completed') byFaculty[r.faculty].completed++;
+                if (r.status === 'pending') byFaculty[r.faculty].pending++;
+            });
+
+            document.getElementById('summaryBody').innerHTML = Object.entries(byFaculty).map(([faculty, s]) => `
+                <tr>
+                    <td>${faculty}</td>
+                    <td>${s.total}</td>
+                    <td>${s.completed}</td>
+                    <td>${s.pending}</td>
+                </tr>
+            `).join('');
+        }
+
+        document.addEventListener('DOMContentLoaded', renderReports);
+    </script>
+</body>
+</html>

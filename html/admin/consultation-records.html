@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultation Records | CONSULT-TRAK</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/dashboard.css">
+    <link rel="stylesheet" href="../../css/admin.css">
+</head>
+<body data-role="admin">
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="dashboard.html" class="navbar-brand">
+                <span class="brand-icon">📋</span>
+                <h1 class="brand-name">CONSULT-TRAK</h1>
+            </a>
+            <div class="navbar-user">
+                <div class="user-info">
+                    <span class="user-name" id="userName">Administrator</span><br>
+                    <span class="user-role">System Admin</span>
+                </div>
+                <button class="logout-btn" id="logoutBtn">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item" data-page="dashboard">
+                    <span class="nav-icon">🏠</span>
+                    <span class="nav-label">Dashboard</span>
+                </a>
+                <a href="manage-accounts.html" class="nav-item" data-page="manage-accounts">
+                    <span class="nav-icon">👥</span>
+                    <span class="nav-label">Manage Accounts</span>
+                </a>
+                <a href="consultation-records.html" class="nav-item" data-page="consultation-records">
+                    <span class="nav-icon">📑</span>
+                    <span class="nav-label">Consultation Records</span>
+                </a>
+                <a href="reports.html" class="nav-item" data-page="reports">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-label">Reports</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h2 class="page-title">Consultation Records</h2>
+                <p class="page-subtitle">View and monitor consultation records system-wide (FR-011)</p>
+            </div>
+
+            <div class="filter-bar">
+                <input type="text" id="searchInput" class="form-input" placeholder="Search by student, faculty, or subject...">
+                <select id="statusFilter" class="form-select">
+                    <option value="all">All Status</option>
+                    <option value="completed">Completed</option>
+                    <option value="pending">Pending</option>
+                    <option value="cancelled">Cancelled</option>
+                </select>
+            </div>
+
+            <div class="content-card">
+                <div class="card-header">
+                    <h3 class="card-title">All Consultation Records</h3>
+                    <span class="stat-label" id="recordCount"></span>
+                </div>
+                <div class="card-body no-padding">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Faculty</th>
+                                <th>Subject</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Status</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recordsTableBody">
+                            <!-- Filled by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../../js/script.js"></script>
+    <script src="../../js/admin.js"></script>
+    <script>
+        let records = [];
+
+        function renderRecords(recordsToShow) {
+            const tbody = document.getElementById('recordsTableBody');
+            const list = recordsToShow || records;
+            document.getElementById('recordCount').textContent = list.length + ' record(s)';
+
+            tbody.innerHTML = list.map(c => `
+                <tr>
+                    <td>${c.student}</td>
+                    <td>${c.faculty}</td>
+                    <td>${c.subject}</td>
+                    <td>${c.date}</td>
+                    <td>${c.time}</td>
+                    <td><span class="status-badge ${c.status}">${c.status.charAt(0).toUpperCase() + c.status.slice(1)}</span></td>
+                    <td>${c.notes || '—'}</td>
+                </tr>
+            `).join('');
+        }
+
+        function applyFilters() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const status = document.getElementById('statusFilter').value;
+            const filtered = records.filter(c => {
+                const matchSearch = c.student.toLowerCase().includes(search) ||
+                                    c.faculty.toLowerCase().includes(search) ||
+                                    c.subject.toLowerCase().includes(search);
+                const matchStatus = status === 'all' || c.status === status;
+                return matchSearch && matchStatus;
+            });
+            renderRecords(filtered);
+        }
+
+        window.addEventListener('load', () => {
+            records = window.adminFunctions.getConsultationData();
+            renderRecords();
+            document.getElementById('searchInput').addEventListener('input', applyFilters);
+            document.getElementById('statusFilter').addEventListener('change', applyFilters);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Availability | CONSULT-TRAK</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/dashboard.css">
+    <link rel="stylesheet" href="../../css/student.css">
+</head>
+<body data-role="student">
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="dashboard.html" class="navbar-brand">
+                <span class="brand-icon">📋</span>
+                <h1 class="brand-name">CONSULT-TRAK</h1>
+            </a>
+            <div class="navbar-user">
+                <div class="user-info">
+                    <span class="user-name" id="userName">Student</span><br>
+                    <span class="user-role">Computer Science</span>
+                </div>
+                <button class="logout-btn" id="logoutBtn">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item" data-page="dashboard">
+                    <span class="nav-icon">🏠</span>
+                    <span class="nav-label">Dashboard</span>
+                </a>
+                <a href="faculty-availability.html" class="nav-item" data-page="faculty-availability">
+                    <span class="nav-icon">⏰</span>
+                    <span class="nav-label">Faculty Availability</span>
+                </a>
+                <a href="my-requests.html" class="nav-item" data-page="my-requests">
+                    <span class="nav-icon">📝</span>
+                    <span class="nav-label">My Requests</span>
+                </a>
+                <a href="appointments.html" class="nav-item" data-page="appointments">
+                    <span class="nav-icon">📅</span>
+                    <span class="nav-label">Appointments</span>
+                </a>
+                <a href="history.html" class="nav-item" data-page="history">
+                    <span class="nav-icon">📜</span>
+                    <span class="nav-label">History</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h2 class="page-title">Faculty Availability</h2>
+                <p class="page-subtitle">Browse available consultation slots to schedule a meeting (FR-007)</p>
+            </div>
+
+            <div class="content-card">
+                <div class="card-header">
+                    <h3 class="card-title">This Week's Available Slots</h3>
+                    <span class="stat-label" id="slotCount"></span>
+                </div>
+                <div class="card-body" id="availabilityList">
+                    <!-- Filled by JS -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../../js/script.js"></script>
+    <script src="../../js/student.js"></script>
+    <script>
+        function renderAvailability() {
+            const slots = window.studentFunctions.getFacultyAvailability();
+            const list = document.getElementById('availabilityList');
+            document.getElementById('slotCount').textContent = slots.length + ' slot(s) available';
+
+            if (slots.length === 0) {
+                list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">⏰</div><div class="empty-state-title">No availability right now</div><div class="empty-state-text">Check back later for new consultation slots.</div></div>`;
+                return;
+            }
+
+            list.innerHTML = slots.map(s => `
+                <div class="availability-row">
+                    <div>
+                        <div class="availability-faculty">${s.faculty}</div>
+                        <div class="availability-detail">${s.department}</div>
+                    </div>
+                    <div>
+                        <div class="availability-detail">${s.day}</div>
+                        <div class="availability-detail">${s.time}</div>
+                    </div>
+                    <div>
+                        <div class="stat-label">${s.slots} slot(s) open</div>
+                        <button class="book-slot-btn" onclick="bookSlot(${s.id}, '${s.faculty.replace(/'/g, "\\'")}', '${s.day}', '${s.time}')">Book Slot</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function bookSlot(id, faculty, day, time) {
+            if (confirm(`Book a consultation with ${faculty} on ${day} (${time})?`)) {
+                // Redirect to request form with data pre-selected via query params
+                const params = new URLSearchParams({ faculty, day, time });
+                window.location.href = 'my-requests.html?' + params.toString();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', renderAvailability);
+    </script>
+</body>
+</html>

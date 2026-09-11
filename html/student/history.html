@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History | CONSULT-TRAK</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/dashboard.css">
+    <link rel="stylesheet" href="../../css/student.css">
+</head>
+<body data-role="student">
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="dashboard.html" class="navbar-brand">
+                <span class="brand-icon">📋</span>
+                <h1 class="brand-name">CONSULT-TRAK</h1>
+            </a>
+            <div class="navbar-user">
+                <div class="user-info">
+                    <span class="user-name" id="userName">Student</span><br>
+                    <span class="user-role">Computer Science</span>
+                </div>
+                <button class="logout-btn" id="logoutBtn">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item" data-page="dashboard">
+                    <span class="nav-icon">🏠</span>
+                    <span class="nav-label">Dashboard</span>
+                </a>
+                <a href="faculty-availability.html" class="nav-item" data-page="faculty-availability">
+                    <span class="nav-icon">⏰</span>
+                    <span class="nav-label">Faculty Availability</span>
+                </a>
+                <a href="my-requests.html" class="nav-item" data-page="my-requests">
+                    <span class="nav-icon">📝</span>
+                    <span class="nav-label">My Requests</span>
+                </a>
+                <a href="appointments.html" class="nav-item" data-page="appointments">
+                    <span class="nav-icon">📅</span>
+                    <span class="nav-label">Appointments</span>
+                </a>
+                <a href="history.html" class="nav-item" data-page="history">
+                    <span class="nav-icon">📜</span>
+                    <span class="nav-label">History</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h2 class="page-title">My Consultation History</h2>
+                <p class="page-subtitle">Review your past consultations (FR-010)</p>
+            </div>
+
+            <div class="filter-bar">
+                <select id="statusFilter" class="form-select">
+                    <option value="all">All</option>
+                    <option value="completed">Completed</option>
+                    <option value="accepted">Scheduled</option>
+                    <option value="pending">Pending</option>
+                    <option value="cancelled">Cancelled</option>
+                    <option value="rejected">Rejected</option>
+                </select>
+            </div>
+
+            <div class="history-timeline" id="historyTimeline">
+                <!-- Filled by JS -->
+            </div>
+        </main>
+    </div>
+
+    <script src="../../js/script.js"></script>
+    <script src="../../js/student.js"></script>
+    <script>
+        function renderHistory() {
+            const history = window.studentFunctions.getHistory();
+            const filter = document.getElementById('statusFilter').value;
+            const timeline = document.getElementById('historyTimeline');
+
+            const filtered = filter === 'all' ? history : history.filter(h => h.status === filter);
+
+            if (filtered.length === 0) {
+                timeline.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📜</div><div class="empty-state-title">No history found</div><div class="empty-state-text">Your completed consultations will appear here.</div></div>`;
+                return;
+            }
+
+            timeline.innerHTML = filtered.map(h => `
+                <div class="history-item ${h.status}">
+                    <div style="display:flex; justify-content:space-between; align-items:center; gap:var(--space-md);">
+                        <div>
+                            <strong>${h.subject}</strong> <span class="stat-label">with ${h.faculty}</span>
+                        </div>
+                        <span class="status-badge ${h.status}">${h.status.charAt(0).toUpperCase() + h.status.slice(1)}</span>
+                    </div>
+                    <div class="appointment-details" style="margin: var(--space-sm) 0;">
+                        <span>📅 ${h.date}</span>
+                        <span>⏰ ${h.time}</span>
+                        <span>⏱ ${h.duration}</span>
+                    </div>
+                    <div class="activity-title" style="font-size: var(--font-size-sm);">${h.outcome}</div>
+                </div>
+            `).join('');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('statusFilter').addEventListener('change', renderHistory);
+            renderHistory();
+        });
+    </script>
+</body>
+</html>

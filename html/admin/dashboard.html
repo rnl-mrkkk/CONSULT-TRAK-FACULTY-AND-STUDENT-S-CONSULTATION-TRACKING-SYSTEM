@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | CONSULT-TRAK</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/dashboard.css">
+    <link rel="stylesheet" href="../../css/admin.css">
+</head>
+<body data-role="admin">
+    <!-- Top Navigation -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="dashboard.html" class="navbar-brand">
+                <span class="brand-icon">📋</span>
+                <h1 class="brand-name">CONSULT-TRAK</h1>
+            </a>
+            <div class="navbar-user">
+                <div class="user-info">
+                    <span class="user-name" id="userName">Administrator</span><br>
+                    <span class="user-role">System Admin</span>
+                </div>
+                <button class="logout-btn" id="logoutBtn">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Layout -->
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item" data-page="dashboard">
+                    <span class="nav-icon">🏠</span>
+                    <span class="nav-label">Dashboard</span>
+                </a>
+                <a href="manage-accounts.html" class="nav-item" data-page="manage-accounts">
+                    <span class="nav-icon">👥</span>
+                    <span class="nav-label">Manage Accounts</span>
+                </a>
+                <a href="consultation-records.html" class="nav-item" data-page="consultation-records">
+                    <span class="nav-icon">📑</span>
+                    <span class="nav-label">Consultation Records</span>
+                </a>
+                <a href="reports.html" class="nav-item" data-page="reports">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-label">Reports</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="page-header">
+                <h2 class="page-title">Administrator Dashboard</h2>
+                <p class="page-subtitle">Overview of the consultation tracking system</p>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card admin">
+                    <div class="stat-header">
+                        <div class="stat-icon primary">👥</div>
+                    </div>
+                    <div class="stat-value" id="totalAccounts">156</div>
+                    <div class="stat-label">Total Accounts</div>
+                </div>
+                <div class="stat-card admin">
+                    <div class="stat-header">
+                        <div class="stat-icon warning">⏳</div>
+                    </div>
+                    <div class="stat-value" id="pendingRequests">8</div>
+                    <div class="stat-label">Pending Requests</div>
+                </div>
+                <div class="stat-card admin">
+                    <div class="stat-header">
+                        <div class="stat-icon success">✅</div>
+                    </div>
+                    <div class="stat-value" id="completedToday">12</div>
+                    <div class="stat-label">Completed Today</div>
+                </div>
+                <div class="stat-card admin">
+                    <div class="stat-header">
+                        <div class="stat-icon info">📅</div>
+                    </div>
+                    <div class="stat-value" id="activeConsultations">45</div>
+                    <div class="stat-label">Active Consultations</div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="content-card">
+                <div class="card-header">
+                    <h3 class="card-title">Recent Activity</h3>
+                    <button class="action-btn secondary sm" onclick="location.href='reports.html'">View Reports</button>
+                </div>
+                <div class="card-body" id="activityFeed">
+                    <!-- Filled by JS -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../../js/script.js"></script>
+    <script src="../../js/admin.js"></script>
+    <script>
+        // Render dashboard data on load
+        function renderAdminDashboard() {
+            const stats = window.adminFunctions.getStats();
+            document.getElementById('totalAccounts').textContent = stats.totalAccounts;
+            document.getElementById('pendingRequests').textContent = stats.pendingRequests;
+            document.getElementById('completedToday').textContent = stats.completedToday;
+            document.getElementById('activeConsultations').textContent = stats.activeConsultations;
+
+            const activity = window.adminFunctions.getRecentActivity();
+            const feed = document.getElementById('activityFeed');
+            feed.innerHTML = activity.map(item => `
+                <div class="activity-item">
+                    <div class="activity-dot"></div>
+                    <div class="activity-content">
+                        <div class="activity-title">${item.action}</div>
+                        <div class="activity-meta">${item.user} · ${item.time}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        document.addEventListener('DOMContentLoaded', renderAdminDashboard);
+    </script>
+</body>
+</html>

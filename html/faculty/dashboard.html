@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Dashboard | CONSULT-TRAK</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/dashboard.css">
+    <link rel="stylesheet" href="../../css/faculty.css">
+</head>
+<body data-role="faculty">
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="dashboard.html" class="navbar-brand">
+                <span class="brand-icon">📋</span>
+                <h1 class="brand-name">CONSULT-TRAK</h1>
+            </a>
+            <div class="navbar-user">
+                <div class="user-info">
+                    <span class="user-name" id="userName">Faculty Member</span><br>
+                    <span class="user-role">Computer Science</span>
+                </div>
+                <button class="logout-btn" id="logoutBtn">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item" data-page="dashboard">
+                    <span class="nav-icon">🏠</span>
+                    <span class="nav-label">Dashboard</span>
+                </a>
+                <a href="consultation-requests.html" class="nav-item" data-page="consultation-requests">
+                    <span class="nav-icon">📩</span>
+                    <span class="nav-label">Consultation Requests</span>
+                </a>
+                <a href="availability.html" class="nav-item" data-page="availability">
+                    <span class="nav-icon">⏰</span>
+                    <span class="nav-label">Availability</span>
+                </a>
+                <a href="consultation-records.html" class="nav-item" data-page="consultation-records">
+                    <span class="nav-icon">📝</span>
+                    <span class="nav-label">Consultation Records</span>
+                </a>
+                <a href="history.html" class="nav-item" data-page="history">
+                    <span class="nav-icon">📜</span>
+                    <span class="nav-label">History</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h2 class="page-title">Faculty Dashboard</h2>
+                <p class="page-subtitle">Welcome back, monitor your consultations</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card faculty">
+                    <div class="stat-header">
+                        <div class="stat-icon warning">⏳</div>
+                    </div>
+                    <div class="stat-value" id="pendingRequests">5</div>
+                    <div class="stat-label">Pending Requests</div>
+                </div>
+                <div class="stat-card faculty">
+                    <div class="stat-header">
+                        <div class="stat-icon info">📅</div>
+                    </div>
+                    <div class="stat-value" id="todayAppointments">3</div>
+                    <div class="stat-label">Today's Appointments</div>
+                </div>
+                <div class="stat-card faculty">
+                    <div class="stat-header">
+                        <div class="stat-icon success">✅</div>
+                    </div>
+                    <div class="stat-value" id="completedThisWeek">12</div>
+                    <div class="stat-label">Completed This Week</div>
+                </div>
+                <div class="stat-card faculty">
+                    <div class="stat-header">
+                        <div class="stat-icon primary">👥</div>
+                    </div>
+                    <div class="stat-value" id="totalStudents">45</div>
+                    <div class="stat-label">Students Advised</div>
+                </div>
+            </div>
+
+            <!-- Today's Schedule -->
+            <div class="content-card">
+                <div class="card-header">
+                    <h3 class="card-title">Today's Schedule</h3>
+                    <button class="action-btn secondary sm" onclick="location.href='availability.html'">Manage Availability</button>
+                </div>
+                <div class="card-body" id="scheduleList">
+                    <!-- Filled by JS -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../../js/script.js"></script>
+    <script src="../../js/faculty.js"></script>
+    <script>
+        function renderFacultyDashboard() {
+            const stats = window.facultyFunctions.getStats();
+            document.getElementById('pendingRequests').textContent = stats.pendingRequests;
+            document.getElementById('todayAppointments').textContent = stats.todayAppointments;
+            document.getElementById('completedThisWeek').textContent = stats.completedThisWeek;
+            document.getElementById('totalStudents').textContent = stats.totalStudents;
+
+            const schedule = window.facultyFunctions.getTodaySchedule();
+            document.getElementById('scheduleList').innerHTML = schedule.map(item => `
+                <div class="schedule-item">
+                    <div class="schedule-time">${item.time}</div>
+                    <div class="schedule-details">
+                        <div class="schedule-student">${item.student}</div>
+                        <div class="schedule-subject">${item.subject}</div>
+                    </div>
+                    <span class="schedule-status ${item.status}">${item.status.charAt(0).toUpperCase() + item.status.slice(1)}</span>
+                </div>
+            `).join('');
+        }
+        document.addEventListener('DOMContentLoaded', renderFacultyDashboard);
+    </script>
+</body>
+</html>
