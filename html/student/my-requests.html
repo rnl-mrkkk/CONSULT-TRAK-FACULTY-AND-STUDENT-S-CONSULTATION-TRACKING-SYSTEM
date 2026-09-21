@@ -11,44 +11,62 @@
 <body data-role="student">
     <nav class="navbar">
         <div class="navbar-container">
-            <a href="dashboard.html" class="navbar-brand">
-                <span class="brand-icon">📋</span>
-                <h1 class="brand-name">CONSULT-TRAK</h1>
-            </a>
             <div class="navbar-user">
                 <div class="user-info">
-                    <span class="user-name" id="userName">Student</span><br>
-                    <span class="user-role">Computer Science</span>
+                    <div class="role">Juan Dela Cruz</div>
+                    <div class="dept">BS Information Technology</div>
                 </div>
-                <button class="logout-btn" id="logoutBtn">Logout</button>
+                <button class="notification-bell" aria-label="Notifications">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                    <span class="badge">3</span>
+                </button>
+                <div class="theme-toggle" onclick="toggleTheme()">
+                    <span class="label" id="themeLabel">Light</span>
+                    <div class="switch"><div class="knob"></div></div>
+                </div>
             </div>
         </div>
     </nav>
 
     <div class="dashboard-container">
         <aside class="sidebar">
+            <a href="dashboard.html" class="sidebar-brand">
+                <span class="brand-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 4v16M3 10h18"/></svg></span>
+                <h1 class="brand-name">CONSULT-TRAK</h1>
+            </a>
+            <div class="sidebar-user-card">
+                <div class="sidebar-user-avatar">JDC</div>
+                <div class="sidebar-user-info">
+                    <span class="sidebar-user-name">Juan Dela Cruz</span>
+                    <span class="sidebar-user-dept">BS Information Technology</span>
+                </div>
+                <svg class="sidebar-user-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
             <nav class="sidebar-nav">
                 <a href="dashboard.html" class="nav-item" data-page="dashboard">
-                    <span class="nav-icon">🏠</span>
+                    <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11 12 3l9 8"/><path d="M5 10v11h14V10"/></svg></span>
                     <span class="nav-label">Dashboard</span>
                 </a>
                 <a href="faculty-availability.html" class="nav-item" data-page="faculty-availability">
-                    <span class="nav-icon">⏰</span>
+                    <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></svg></span>
                     <span class="nav-label">Faculty Availability</span>
                 </a>
                 <a href="my-requests.html" class="nav-item" data-page="my-requests">
-                    <span class="nav-icon">📝</span>
+                    <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg></span>
                     <span class="nav-label">My Requests</span>
                 </a>
                 <a href="appointments.html" class="nav-item" data-page="appointments">
-                    <span class="nav-icon">📅</span>
+                    <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span>
                     <span class="nav-label">Appointments</span>
                 </a>
                 <a href="history.html" class="nav-item" data-page="history">
-                    <span class="nav-icon">📜</span>
+                    <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v6h6"/><path d="M3.51 9a9 9 0 1 0 2.13-5.36"/><path d="M12 7v5l3 2"/></svg></span>
                     <span class="nav-label">History</span>
                 </a>
             </nav>
+            <div class="sidebar-footer">
+                <button class="logout-btn" id="logoutBtn">Logout</button>
+            </div>
         </aside>
 
         <main class="main-content">
@@ -63,18 +81,41 @@
                 </div>
                 <div class="card-body">
                     <div class="form-group">
-                        <label class="form-label">Select Faculty</label>
-                        <select id="reqFaculty" class="form-select">
-                            <option value="">— Select a faculty member —</option>
-                            <!-- Filled by JS -->
+                        <label class="form-label">Select Department</label>
+                        <select id="reqDepartment" class="form-select" onchange="onDepartmentChange()">
+                            <option value="">Select a department</option>
+                            <option value="SOCS">SOCS Department</option>
+                            <option value="SBM">SBM Department</option>
+                            <option value="SON">SON Department</option>
                         </select>
+                    </div>
+                    <div class="form-group" id="facultyGroup" style="display: none;">
+                        <label class="form-label">Select Faculty Member</label>
+                        <select id="reqFaculty" class="form-select">
+                            <option value="">Select a faculty member</option>
+                        </select>
+                        <p id="sonNotice" style="display: none; margin-top: var(--space-xs); font-size: var(--font-size-sm); color: var(--color-text-tertiary);">
+                            No faculty members available in this department yet.
+                        </p>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Concern / Topic</label>
-                        <input type="text" id="reqSubject" class="form-input" placeholder="e.g., Course Advising, Thesis Review">
+                        <select id="reqSubject" class="form-select">
+                            <option value="">Select a concern or topic</option>
+                            <option value="Grades">Grades</option>
+                            <option value="Academic Performance">Academic Performance</option>
+                            <option value="Course/Subject Requirements">Course/Subject Requirements</option>
+                            <option value="Thesis / Capstone Advising">Thesis / Capstone Advising</option>
+                            <option value="Registration Concern">Registration Concern</option>
+                            <option value="Attendance Concern">Attendance Concern</option>
+                            <option value="OJT / Internship Concern">OJT / Internship Concern</option>
+                            <option value="Recommendation Letter Request">Recommendation Letter Request</option>
+                            <option value="Personal / Behavioral Concern">Personal / Behavioral Concern</option>
+                            <option value="Others">Others (please specify)</option>
+                        </select>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Describe your concern</label>
+                        <label class="form-label">Describe your concern <span class="optional-text">(optional)</span></label>
                         <textarea id="reqConcern" class="form-textarea" placeholder="Explain what you'd like to discuss..."></textarea>
                     </div>
                     <div class="form-row">
@@ -96,6 +137,23 @@
     <script src="../../js/script.js"></script>
     <script src="../../js/student.js"></script>
     <script>
+        function toggleTheme() {
+            const root = document.documentElement;
+            const isDark = root.getAttribute('data-theme') === 'dark';
+            root.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            document.getElementById('themeLabel').textContent = isDark ? 'Light' : 'Dark';
+            localStorage.setItem('theme', isDark ? 'light' : 'dark');
+        }
+
+        // Load saved theme
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+                document.getElementById('themeLabel').textContent = savedTheme === 'dark' ? 'Dark' : 'Light';
+            }
+        });
+
         function formatTime(t) {
             if (!t) return '';
             const [h, m] = t.split(':').map(Number);
@@ -105,11 +163,45 @@
             return `${hour}:${m.toString().padStart(2, '0')} ${period}`;
         }
 
+        function onDepartmentChange() {
+            const deptSelect = document.getElementById('reqDepartment');
+            const facultySelect = document.getElementById('reqFaculty');
+            const facultyGroup = document.getElementById('facultyGroup');
+            const sonNotice = document.getElementById('sonNotice');
+            const selectedDept = deptSelect.value;
+
+            // Reset faculty select
+            facultySelect.innerHTML = '<option value="">Select a faculty member</option>';
+            sonNotice.style.display = 'none';
+
+            if (!selectedDept) {
+                facultyGroup.style.display = 'none';
+                return;
+            }
+
+            // Show faculty group
+            facultyGroup.style.display = 'block';
+
+            // Get faculty for selected department
+            const allFaculty = window.studentFunctions.getAllFaculty();
+            const deptFaculty = allFaculty.filter(f => f.department === selectedDept);
+
+            if (deptFaculty.length === 0) {
+                // Show empty state for SON
+                sonNotice.style.display = 'block';
+                facultySelect.disabled = true;
+            } else {
+                facultySelect.disabled = false;
+                // Get unique faculty names
+                const uniqueFaculty = [...new Set(deptFaculty.map(f => f.displayName))];
+                const options = uniqueFaculty.map(f => `<option value="${f}">${f}</option>`).join('');
+                facultySelect.innerHTML = '<option value="">Select a faculty member</option>' + options;
+            }
+        }
+
         function populateFaculty() {
-            const select = document.getElementById('reqFaculty');
-            const faculty = [...new Set(window.studentFunctions.getAllFaculty().map(f => f.faculty))];
-            select.innerHTML = '<option value="">— Select a faculty member —</option>' +
-                faculty.map(f => `<option value="${f}">${f}</option>`).join('');
+            // Faculty is now populated via department selection
+            // This function is kept for backwards compatibility
         }
 
         function submitRequest() {
@@ -148,7 +240,6 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            populateFaculty();
             prefillFromQuery();
         });
     </script>

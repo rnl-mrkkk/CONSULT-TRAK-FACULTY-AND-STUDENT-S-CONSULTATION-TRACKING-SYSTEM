@@ -2,11 +2,6 @@
    Faculty-specific styles
    ======================================== */
 
-/* Faculty stats accent */
-.stat-card.faculty {
-    border-top: 3px solid var(--color-success);
-}
-
 /* Availability grid */
 .availability-grid {
     display: grid;

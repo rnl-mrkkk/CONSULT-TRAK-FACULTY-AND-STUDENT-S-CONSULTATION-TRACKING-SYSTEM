@@ -11,9 +11,9 @@ const facultyData = {
     // Faculty member info
     faculty: {
         id: 1,
-        name: 'Dr. Michael Brown',
-        email: 'faculty@example.com',
-        department: 'Computer Science',
+        name: 'Mr. Jaafar Omar',
+        email: 'faculty@dummy.com',
+        department: 'SOCS Department',
         office: 'Room 302, Engineering Building',
         phone: '(555) 123-4567',
         bio: 'Associate Professor specializing in Software Engineering and Database Systems.'
@@ -37,25 +37,25 @@ const facultyData = {
 
     // Consultation requests (incoming from students)
     requests: [
-        { id: 1, student: 'John Smith', studentId: 'STU001', email: 'john.smith@example.com', subject: 'Course Advising', concern: 'Need help choosing electives for next semester', preferredDate: '2026-09-15', preferredTime: '10:00 AM', status: 'pending', submittedAt: '2026-09-10' },
-        { id: 2, student: 'Emily Davis', studentId: 'STU002', email: 'emily.davis@example.com', subject: 'Research Project', concern: 'Looking for guidance on thesis topic', preferredDate: '2026-09-16', preferredTime: '2:00 PM', status: 'pending', submittedAt: '2026-09-11' },
-        { id: 3, student: 'Robert Garcia', studentId: 'STU003', email: 'robert.garcia@example.com', subject: 'Programming Help', concern: 'Struggling with data structures assignment', preferredDate: '2026-09-14', preferredTime: '11:00 AM', status: 'accepted', submittedAt: '2026-09-09' },
-        { id: 4, student: 'Amanda White', studentId: 'STU004', email: 'amanda.white@example.com', subject: 'Career Guidance', concern: 'Internship opportunities and career paths', preferredDate: '2026-09-17', preferredTime: '3:00 PM', status: 'pending', submittedAt: '2026-09-11' },
-        { id: 5, student: 'David Lee', studentId: 'STU005', email: 'david.lee@example.com', subject: 'Course Material', concern: 'Questions about lecture notes', preferredDate: '2026-09-12', preferredTime: '9:00 AM', status: 'rejected', submittedAt: '2026-09-08', rejectionReason: 'Time slot already booked' }
+        { id: 1, student: 'John Smith', studentId: 'STU001', email: 'john.smith@dummy.com', subject: 'Course/Subject Requirements', concern: 'Need help choosing electives for next semester', preferredDate: '2026-09-15', preferredTime: '10:00 AM', status: 'pending', submittedAt: '2026-09-10' },
+        { id: 2, student: 'Emily Davis', studentId: 'STU002', email: 'emily.davis@dummy.com', subject: 'Thesis / Capstone Advising', concern: 'Looking for guidance on thesis topic', preferredDate: '2026-09-16', preferredTime: '2:00 PM', status: 'pending', submittedAt: '2026-09-11' },
+        { id: 3, student: 'Robert Garcia', studentId: 'STU003', email: 'robert.garcia@dummy.com', subject: 'Course/Subject Requirements', concern: 'Struggling with data structures assignment', preferredDate: '2026-09-14', preferredTime: '11:00 AM', status: 'scheduled', submittedAt: '2026-09-09' },
+        { id: 4, student: 'Amanda White', studentId: 'STU004', email: 'amanda.white@dummy.com', subject: 'OJT / Internship Concern', concern: 'Internship opportunities and career paths', preferredDate: '2026-09-17', preferredTime: '3:00 PM', status: 'pending', submittedAt: '2026-09-11' },
+        { id: 5, student: 'David Lee', studentId: 'STU005', email: 'david.lee@dummy.com', subject: 'Course/Subject Requirements', concern: 'Questions about lecture notes', preferredDate: '2026-09-12', preferredTime: '9:00 AM', status: 'rejected', submittedAt: '2026-09-08', rejectionReason: 'Time slot already booked' }
     ],
 
     // Consultation records (completed)
     records: [
-        { id: 1, student: 'Sarah Johnson', studentId: 'STU010', subject: 'Thesis Review', date: '2026-09-10', time: '10:00 AM', duration: '45 min', status: 'completed', concerns: 'Discussed thesis outline and methodology', recommendations: 'Expand literature review section', followUp: 'Schedule next meeting in 2 weeks' },
-        { id: 2, student: 'Mark Thompson', studentId: 'STU011', subject: 'Project Help', date: '2026-09-09', time: '2:00 PM', duration: '30 min', status: 'completed', concerns: 'Database design for capstone project', recommendations: 'Use normalized schema and add indexes', followUp: null },
-        { id: 3, student: 'Lisa Chen', studentId: 'STU012', subject: 'Career Advice', date: '2026-09-08', time: '11:00 AM', duration: '60 min', status: 'completed', concerns: 'Job market for software engineers', recommendations: 'Build portfolio projects and contribute to open source', followUp: 'Follow up on internship applications' },
-        { id: 4, student: 'Kevin Martinez', studentId: 'STU013', subject: 'Course Advice', date: '2026-09-05', time: '9:00 AM', duration: '30 min', status: 'cancelled', concerns: 'Course selection for spring semester', recommendations: null, followUp: null, cancellationReason: 'Student cancelled due to scheduling conflict' }
+        { id: 1, student: 'Sarah Johnson', studentId: 'STU010', subject: 'Thesis / Capstone Advising', date: '2026-09-10', time: '10:00 AM', duration: '45 min', status: 'completed', concerns: 'Discussed thesis outline and methodology', recommendations: 'Expand literature review section', followUp: 'Schedule next meeting in 2 weeks' },
+        { id: 2, student: 'Mark Thompson', studentId: 'STU011', subject: 'Academic Performance', date: '2026-09-09', time: '2:00 PM', duration: '30 min', status: 'completed', concerns: 'Database design for capstone project', recommendations: 'Use normalized schema and add indexes', followUp: null },
+        { id: 3, student: 'Lisa Chen', studentId: 'STU012', subject: 'OJT / Internship Concern', date: '2026-09-08', time: '11:00 AM', duration: '60 min', status: 'completed', concerns: 'Job market for software engineers', recommendations: 'Build portfolio projects and contribute to open source', followUp: 'Follow up on internship applications' },
+        { id: 4, student: 'Kevin Martinez', studentId: 'STU013', subject: 'Course/Subject Requirements', date: '2026-09-05', time: '9:00 AM', duration: '30 min', status: 'cancelled', concerns: 'Course selection for spring semester', recommendations: null, followUp: null, cancellationReason: 'Student cancelled due to scheduling conflict' }
     ],
 
     // Today's schedule
     todaySchedule: [
-        { id: 1, student: 'Robert Garcia', time: '9:00 AM', subject: 'Programming Help', status: 'scheduled' },
-        { id: 2, student: 'Sarah Johnson', time: '11:00 AM', subject: 'Thesis Review', status: 'completed' },
+        { id: 1, student: 'Robert Garcia', time: '9:00 AM', subject: 'Course/Subject Requirements', status: 'scheduled' },
+        { id: 2, student: 'Sarah Johnson', time: '11:00 AM', subject: 'Thesis / Capstone Advising', status: 'completed' },
         { id: 3, student: 'Guest', time: '2:00 PM', subject: 'Office Hours', status: 'open' }
     ]
 };
@@ -119,7 +119,7 @@ function getTodaySchedule() {
 function acceptRequest(requestId) {
     const request = facultyData.requests.find(r => r.id === requestId);
     if (request) {
-        request.status = 'accepted';
+        request.status = 'scheduled';
         return true;
     }
     return false;

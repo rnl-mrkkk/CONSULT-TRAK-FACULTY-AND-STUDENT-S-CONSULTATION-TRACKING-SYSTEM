@@ -2,11 +2,6 @@
    Admin-specific styles
    ======================================== */
 
-/* Admin stats accent */
-.stat-card.admin {
-    border-top: 3px solid var(--color-primary);
-}
-
 /* Account management specific */
 .account-status-toggle {
     display: flex;

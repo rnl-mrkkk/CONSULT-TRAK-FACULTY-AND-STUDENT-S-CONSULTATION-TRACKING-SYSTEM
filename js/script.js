@@ -85,6 +85,38 @@ function safeLocalStorageGet(key) {
 }
 
 /**
+ * Generic line icons (same stroke style as the login fields)
+ */
+const ICON_PATHS = {
+    brand: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 4v16M3 10h18"/>',
+    home: '<path d="M3 11 12 3l9 8"/><path d="M5 10v11h14V10"/>',
+    users: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+    user: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+    list: '<path d="M8 6h13M8 12h13M8 18h13M3 6h2M3 12h2M3 18h2"/>',
+    chart: '<path d="M3 3v18h18"/><path d="M7 16v-5M12 16V8M17 16v-9"/>',
+    inbox: '<path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>',
+    clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>',
+    note: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/>',
+    history: '<path d="M3 3v6h6"/><path d="M3.51 9a9 9 0 1 0 2.13-5.36"/><path d="M12 7v5l3 2"/>',
+    calendar: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+    check: '<circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 4.5-5"/>',
+    hourglass: '<path d="M6 2h12M6 22h12"/><path d="M8 2v3a4 4 0 0 0 4 4 4 4 0 0 0 4-4V2"/><path d="M8 22v-3a4 4 0 0 1 4-4 4 4 0 0 1 4 4v3"/>',
+    mail: '<rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>',
+    pin: '<path d="M12 21s7-5.4 7-11a7 7 0 1 0-14 0c0 5.6 7 11 7 11z"/><circle cx="12" cy="10" r="2"/>',
+    chevronDown: '<path d="m6 9 6 6 6-6"/>',
+    chevronRight: '<path d="m9 6 6 6-6 6"/>'
+};
+
+function ctIcon(name, size) {
+    const inner = ICON_PATHS[name];
+    if (!inner) return '';
+    const s = size || 20;
+    return `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${inner}</svg>`;
+}
+
+window.ctIcon = ctIcon;
+
+/**
  * Remove data from localStorage with error handling
  */
 function safeLocalStorageRemove(key) {
@@ -145,11 +177,11 @@ function getUserRole() {
  * Returns the role if credentials are valid, null otherwise
  */
 function mockLogin(username, password) {
-    // Demo credentials - password123 for all accounts
+    // Demo credentials - dummy123 for all accounts
     const validCredentials = {
-        'admin@example.com': { password: 'password123', role: 'admin', name: 'Administrator' },
-        'faculty@example.com': { password: 'password123', role: 'faculty', name: 'Faculty Member' },
-        'student@example.com': { password: 'password123', role: 'student', name: 'Student' }
+        'admin@dummy.com': { password: 'dummy123', role: 'admin', name: 'Administrator' },
+        'faculty@dummy.com': { password: 'dummy123', role: 'faculty', name: 'Faculty Member' },
+        'student@dummy.com': { password: 'dummy123', role: 'student', name: 'Student' }
     };
 
     const lowerUsername = username.toLowerCase().trim();
@@ -371,7 +403,7 @@ function handleLoginSubmit(event) {
  */
 function handleForgotPassword(event) {
     event.preventDefault();
-    alert('Password reset functionality would be implemented here.\n\nDemo accounts:\n• admin@example.com / password123\n• faculty@example.com / password123\n• student@example.com / password123');
+    alert('Password reset functionality would be implemented here.\n\nDemo accounts:\n• admin@dummy.com / dummy123\n• faculty@dummy.com / dummy123\n• student@dummy.com / dummy123');
 }
 
 // ========================================
@@ -414,6 +446,132 @@ function initDashboardPage() {
 
     // Highlight current page in sidebar
     highlightCurrentPage();
+
+    // Initialize notification bell
+    initNotifications();
+}
+
+// ========================================
+// NOTIFICATIONS
+// ========================================
+
+/**
+ * Mock notification data by role
+ */
+const NOTIFICATIONS_BY_ROLE = {
+    student: [
+        { id: 1, text: 'Your consultation request with Dr. Mandac has been approved.', time: '2 min ago', type: 'success', unread: true },
+        { id: 2, text: 'Appointment reminder: Meeting with Mrs. Ybanez tomorrow at 10:00 AM.', time: '15 min ago', type: 'warning', unread: true },
+        { id: 3, text: 'New consultation schedule available for next week.', time: '1 hour ago', type: 'info', unread: true },
+        { id: 4, text: 'Your consultation request with Mrs. Dangasi is pending review.', time: '3 hours ago', type: 'info', unread: false },
+        { id: 5, text: 'Consultation record for "Data Structures" has been archived.', time: '1 day ago', type: 'info', unread: false }
+    ],
+    faculty: [
+        { id: 1, text: 'New consultation request from John Smith — Course Requirements.', time: '5 min ago', type: 'warning', unread: true },
+        { id: 2, text: 'Emily Davis requested a thesis advising session.', time: '20 min ago', type: 'warning', unread: true },
+        { id: 3, text: 'Schedule update: Your availability for Friday has been modified.', time: '1 hour ago', type: 'info', unread: true },
+        { id: 4, text: 'Robert Garcia confirmed the appointment for tomorrow.', time: '2 hours ago', type: 'success', unread: false },
+        { id: 5, text: 'Monthly consultation report is ready for download.', time: '1 day ago', type: 'info', unread: false }
+    ],
+    admin: [
+        { id: 1, text: 'New faculty account registered: Dr. Julito Mandac.', time: '10 min ago', type: 'success', unread: true },
+        { id: 2, text: 'System backup completed successfully.', time: '30 min ago', type: 'success', unread: true },
+        { id: 3, text: '3 consultation records require review.', time: '1 hour ago', type: 'warning', unread: true },
+        { id: 4, text: 'Monthly usage report is now available.', time: '3 hours ago', type: 'info', unread: false },
+        { id: 5, text: 'Account inactive: David Lee has been deactivated.', time: '1 day ago', type: 'info', unread: false }
+    ]
+};
+
+const NOTIFICATION_ICON_SVG = {
+    success: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>',
+    warning: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+    info: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>'
+};
+
+/**
+ * Initialize notification bell on all pages
+ */
+function initNotifications() {
+    const bells = document.querySelectorAll('.notification-bell');
+    if (!bells.length) return;
+
+    const pageRole = document.body.getAttribute('data-role') || 'student';
+    const notifications = NOTIFICATIONS_BY_ROLE[pageRole] || NOTIFICATIONS_BY_ROLE.student;
+    const unreadCount = notifications.filter(n => n.unread).length;
+
+    bells.forEach(bell => {
+        // Update badge
+        const badge = bell.querySelector('.badge');
+        if (badge) {
+            badge.textContent = unreadCount;
+            if (unreadCount === 0) badge.classList.add('hidden');
+        }
+
+        // Build panel
+        const panel = document.createElement('div');
+        panel.className = 'notification-panel';
+        panel.innerHTML = buildNotificationHTML(notifications);
+        bell.appendChild(panel);
+
+        // Toggle on bell click
+        bell.addEventListener('click', function (e) {
+            e.stopPropagation();
+            const isOpen = panel.classList.contains('open');
+            closeAllNotifications();
+            if (!isOpen) panel.classList.add('open');
+        });
+
+        // Mark all read
+        const markBtn = panel.querySelector('.mark-read-btn');
+        if (markBtn) {
+            markBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                markAllRead(panel, bell);
+            });
+        }
+    });
+
+    // Close on outside click
+    document.addEventListener('click', closeAllNotifications);
+}
+
+/**
+ * Build notification list HTML
+ */
+function buildNotificationHTML(notifications) {
+    const items = notifications.map(n => `
+        <div class="notification-item ${n.unread ? 'unread' : ''}" data-id="${n.id}">
+            <div class="notification-icon ${n.type}">${NOTIFICATION_ICON_SVG[n.type]}</div>
+            <div class="notification-body">
+                <div class="notification-text">${n.text}</div>
+                <div class="notification-time">${n.time}</div>
+            </div>
+        </div>
+    `).join('');
+
+    return `
+        <div class="notification-header">
+            <span>Notifications</span>
+            <button class="mark-read-btn">Mark all read</button>
+        </div>
+        <div class="notification-list">${items}</div>
+    `;
+}
+
+/**
+ * Close all notification panels
+ */
+function closeAllNotifications() {
+    document.querySelectorAll('.notification-panel.open').forEach(p => p.classList.remove('open'));
+}
+
+/**
+ * Mark all notifications as read
+ */
+function markAllRead(panel, bell) {
+    panel.querySelectorAll('.notification-item.unread').forEach(item => item.classList.remove('unread'));
+    const badge = bell.querySelector('.badge');
+    if (badge) badge.classList.add('hidden');
 }
 
 /**
