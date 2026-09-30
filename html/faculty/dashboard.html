@@ -14,7 +14,7 @@
             <div class="navbar-user">
                 <div class="user-info">
                     <div class="role">Faculty Member</div>
-                    <div class="dept">Computer Science</div>
+                    <div class="dept">SOCS Department</div>
                 </div>
                 <button class="notification-bell" aria-label="Notifications">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
@@ -35,15 +35,15 @@
                 <h1 class="brand-name">CONSULT-TRAK</h1>
             </a>
             <div class="sidebar-user-card">
-                <div class="sidebar-user-avatar">FM</div>
+                <div class="sidebar-user-avatar">JO</div>
                 <div class="sidebar-user-info">
-                    <span class="sidebar-user-name">Faculty Member</span>
-                    <span class="sidebar-user-dept">Computer Science</span>
+                    <span class="sidebar-user-name">Mr. Jaafar Omar</span>
+                    <span class="sidebar-user-dept">SOCS Department</span>
                 </div>
                 <svg class="sidebar-user-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
             </div>
             <nav class="sidebar-nav">
-                <a href="dashboard.html" class="nav-item" data-page="dashboard">
+                <a href="dashboard.html" class="nav-item active" data-page="dashboard">
                     <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11 12 3l9 8"/><path d="M5 10v11h14V10"/></svg></span>
                     <span class="nav-label">Dashboard</span>
                 </a>
@@ -63,6 +63,11 @@
                     <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v6h6"/><path d="M3.51 9a9 9 0 1 0 2.13-5.36"/><path d="M12 7v5l3 2"/></svg></span>
                     <span class="nav-label">History</span>
                 </a>
+
+                <a href="reports.html" class="nav-item" data-page="reports">
+                    <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 15l3-4 3 3 5-7"/></svg></span>
+                    <span class="nav-label">Reports</span>
+                </a>
             </nav>
             <div class="sidebar-footer">
                 <button class="logout-btn" id="logoutBtn">Logout</button>
@@ -72,44 +77,59 @@
         <main class="main-content">
             <div class="page-header">
                 <h2 class="page-title">Faculty Dashboard</h2>
-                <p class="page-subtitle">Welcome back, monitor your consultations</p>
+                <p class="page-subtitle">Welcome back, monitor and manage your student consultations</p>
             </div>
 
+            <!-- KPI Metric Cards -->
             <div class="stats-grid">
-                <div class="stat-card faculty">
+                <div class="stat-card faculty" style="cursor: pointer;" onclick="location.href='consultation-requests.html'">
                     <div class="stat-header">
-                        <div class="stat-icon warning">⏳</div>
+                        <div class="stat-icon warning"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h2M3 12h2M3 18h2"/></svg></div>
                     </div>
-                    <div class="stat-value" id="pendingRequests">5</div>
+                    <div class="stat-value" id="pendingRequests">0</div>
                     <div class="stat-label">Pending Requests</div>
                 </div>
                 <div class="stat-card faculty">
                     <div class="stat-header">
                         <div class="stat-icon info"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></div>
                     </div>
-                    <div class="stat-value" id="todayAppointments">3</div>
-                    <div class="stat-label">Today's Appointments</div>
+                    <div class="stat-value" id="todayAppointments">0</div>
+                    <div class="stat-label">Scheduled Appointments</div>
                 </div>
-                <div class="stat-card faculty">
+                <div class="stat-card faculty" style="cursor: pointer;" onclick="location.href='consultation-records.html'">
                     <div class="stat-header">
                         <div class="stat-icon success"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 4.5-5"/></svg></div>
                     </div>
-                    <div class="stat-value" id="completedThisWeek">12</div>
-                    <div class="stat-label">Completed This Week</div>
+                    <div class="stat-value" id="completedThisWeek">0</div>
+                    <div class="stat-label">Completed Consultations</div>
                 </div>
                 <div class="stat-card faculty">
                     <div class="stat-header">
                         <div class="stat-icon primary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
                     </div>
-                    <div class="stat-value" id="totalStudents">45</div>
+                    <div class="stat-value" id="totalStudents">0</div>
                     <div class="stat-label">Students Advised</div>
+                </div>
+            </div>
+
+            <!-- Pending Requests Section -->
+            <div class="content-card" style="margin-bottom: var(--space-xl);">
+                <div class="card-header">
+                    <div style="display: flex; align-items: center; gap: var(--space-sm);">
+                        <h3 class="card-title">Pending Consultation Requests</h3>
+                        <span class="status-badge pending" id="pendingHeaderBadge">0 Pending</span>
+                    </div>
+                    <button class="action-btn primary sm" onclick="location.href='consultation-requests.html'">View All Requests</button>
+                </div>
+                <div class="card-body" id="dashboardRequestsList">
+                    <!-- Filled dynamically -->
                 </div>
             </div>
 
             <!-- Today's Schedule -->
             <div class="content-card">
                 <div class="card-header">
-                    <h3 class="card-title">Today's Schedule</h3>
+                    <h3 class="card-title">Active Schedule & Office Hours</h3>
                     <button class="action-btn secondary sm" onclick="location.href='availability.html'">Manage Availability</button>
                 </div>
                 <div class="card-body" id="scheduleList">
@@ -126,7 +146,8 @@
             const root = document.documentElement;
             const isDark = root.getAttribute('data-theme') === 'dark';
             root.setAttribute('data-theme', isDark ? 'light' : 'dark');
-            document.getElementById('themeLabel').textContent = isDark ? 'Light' : 'Dark';
+            const label = document.getElementById('themeLabel');
+            if (label) label.textContent = isDark ? 'Light' : 'Dark';
             localStorage.setItem('theme', isDark ? 'light' : 'dark');
         }
 
@@ -135,7 +156,8 @@
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme) {
                 document.documentElement.setAttribute('data-theme', savedTheme);
-                document.getElementById('themeLabel').textContent = savedTheme === 'dark' ? 'Dark' : 'Light';
+                const label = document.getElementById('themeLabel');
+                if (label) label.textContent = savedTheme === 'dark' ? 'Dark' : 'Light';
             }
         });
 
@@ -145,19 +167,88 @@
             document.getElementById('todayAppointments').textContent = stats.todayAppointments;
             document.getElementById('completedThisWeek').textContent = stats.completedThisWeek;
             document.getElementById('totalStudents').textContent = stats.totalStudents;
+            document.getElementById('pendingHeaderBadge').textContent = `${stats.pendingRequests} Pending`;
 
-            const schedule = window.facultyFunctions.getTodaySchedule();
-            document.getElementById('scheduleList').innerHTML = schedule.map(item => `
-                <div class="schedule-item">
-                    <div class="schedule-time">${item.time}</div>
-                    <div class="schedule-details">
-                        <div class="schedule-student">${item.student}</div>
-                        <div class="schedule-subject">${item.subject}</div>
+            // Render Recent Pending Requests
+            const pending = window.facultyFunctions.getPendingRequests();
+            const requestsContainer = document.getElementById('dashboardRequestsList');
+
+            if (pending.length === 0) {
+                requestsContainer.innerHTML = `
+                    <div class="empty-state" style="padding: var(--space-lg);">
+                        <div class="empty-state-title">No pending consultation requests</div>
+                        <div class="empty-state-text">You are all caught up! New requests will appear here.</div>
                     </div>
-                    <span class="schedule-status ${item.status}">${item.status.charAt(0).toUpperCase() + item.status.slice(1)}</span>
-                </div>
-            `).join('');
+                `;
+            } else {
+                requestsContainer.innerHTML = pending.slice(0, 3).map(r => `
+                    <div class="request-card pending" style="margin-bottom: var(--space-md);">
+                        <div class="request-header">
+                            <div>
+                                <div class="request-student">${escapeHtml(r.student)} <span class="student-id-chip">${escapeHtml(r.studentId)}</span></div>
+                                <div class="request-subject"><strong>${escapeHtml(r.subject)}</strong> · Requested: ${escapeHtml(r.preferredDate)} at ${escapeHtml(r.preferredTime)}</div>
+                            </div>
+                            <span class="status-badge pending">Pending</span>
+                        </div>
+                        <div class="request-concern">"${escapeHtml(r.concern)}"</div>
+                        <div class="request-actions">
+                            <button class="action-btn success sm" onclick="quickAccept(${r.id})">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+                                Accept
+                            </button>
+                            <button class="action-btn danger sm" onclick="quickReject(${r.id})">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                                Reject
+                            </button>
+                            <button class="action-btn secondary sm" onclick="location.href='consultation-requests.html'">
+                                Manage in Detail &rarr;
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Render Schedule
+            const schedule = window.facultyFunctions.getTodaySchedule();
+            const scheduleContainer = document.getElementById('scheduleList');
+            if (schedule.length === 0) {
+                scheduleContainer.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-title">No consultations scheduled today</div>
+                        <div class="empty-state-text">Accept pending requests or configure your weekly availability slots.</div>
+                    </div>
+                `;
+            } else {
+                scheduleContainer.innerHTML = schedule.map(item => `
+                    <div class="schedule-item">
+                        <div class="schedule-time">${escapeHtml(item.time)}</div>
+                        <div class="schedule-details">
+                            <div class="schedule-student">${escapeHtml(item.student)}</div>
+                            <div class="schedule-subject">${escapeHtml(item.subject)} ${item.venue ? ` · <span style="font-size: var(--font-size-xs); color: var(--color-text-tertiary);">${escapeHtml(item.venue)}</span>` : ''}</div>
+                        </div>
+                        <span class="schedule-status ${escapeHtml(item.status)}">${escapeHtml(item.status.charAt(0).toUpperCase() + item.status.slice(1))}</span>
+                    </div>
+                `).join('');
+            }
         }
+
+        function quickAccept(id) {
+            if (window.facultyFunctions.acceptRequest(id)) {
+                alert('Request accepted and moved to scheduled appointments.');
+                renderFacultyDashboard();
+            }
+        }
+
+        function quickReject(id) {
+            const reason = prompt('Please enter the reason for rejecting this consultation request:');
+            if (reason !== null) {
+                if (window.facultyFunctions.rejectRequest(id, reason)) {
+                    alert('Request rejected.');
+                    renderFacultyDashboard();
+                }
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', renderFacultyDashboard);
     </script>
 </body>

@@ -13,8 +13,8 @@
         <div class="navbar-container">
             <div class="navbar-user">
                 <div class="user-info">
-                    <div class="role">Juan Dela Cruz</div>
-                    <div class="dept">BS Information Technology</div>
+                    <div class="role">Jenny Panther</div>
+                    <div class="dept">Student</div>
                 </div>
                 <button class="notification-bell" aria-label="Notifications">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
@@ -35,10 +35,10 @@
                 <h1 class="brand-name">CONSULT-TRAK</h1>
             </a>
             <div class="sidebar-user-card">
-                <div class="sidebar-user-avatar">JDC</div>
+                <div class="sidebar-user-avatar">JP</div>
                 <div class="sidebar-user-info">
-                    <span class="sidebar-user-name">Juan Dela Cruz</span>
-                    <span class="sidebar-user-dept">BS Information Technology</span>
+                    <span class="sidebar-user-name">Jenny Panther</span>
+                    <span class="sidebar-user-dept">Student</span>
                 </div>
                 <svg class="sidebar-user-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
             </div>
@@ -82,11 +82,39 @@
                         <label class="form-label filter-label" style="margin: 0;">Filter by Department:</label>
                         <select id="departmentFilter" class="form-select" style="max-width: 300px; margin: 0;" onchange="filterByDepartment()">
                             <option value="">Select a department</option>
-                            <option value="SOCS">SOCS Department</option>
-                            <option value="SBM">SBM Department</option>
+                            <option value="SOCS">SOCS Faculty</option>
+                            <option value="SBM">SBM Faculty</option>
                             <option value="SON">SON Department</option>
                         </select>
                         <span class="stat-label" id="totalSlotCount"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Date / Time Picker (FR5) -->
+            <div id="slotPicker" class="content-card slot-picker" aria-hidden="true" style="margin-bottom: var(--space-lg); display: none;">
+                <div class="card-header">
+                    <div>
+                        <h3 class="card-title">Book with <span id="slotPickerFaculty">Faculty</span></h3>
+                        <div class="availability-detail" id="slotPickerDay"></div>
+                    </div>
+                    <button class="modal-close" type="button" onclick="closeSlotPicker()" aria-label="Close slot picker">&times;</button>
+                </div>
+                <div class="card-body" id="slotPickerBody">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="slotPickerDate">Available Date</label>
+                            <select id="slotPickerDate" class="form-select" onchange="fillSlotTimes()"></select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="slotPickerTime">Available Time</label>
+                            <select id="slotPickerTime" class="form-select"></select>
+                        </div>
+                    </div>
+                    <p class="form-hint">Only times the faculty published are listed. Booked and overlapping times are hidden automatically.</p>
+                    <div class="modal-actions" style="justify-content: flex-end;">
+                        <button class="action-btn secondary" type="button" onclick="closeSlotPicker()">Cancel</button>
+                        <button class="action-btn primary" type="button" onclick="confirmSlotBooking()">Continue to Request</button>
                     </div>
                 </div>
             </div>
@@ -188,19 +216,27 @@
                     `;
                 } else {
                     deptSlots.forEach(s => {
+                        // FR5: only offer windows the faculty actually published and that are not full
+                        const bookable = window.studentFunctions.getBookableSlots(s.faculty);
+                        const facultyWindows = bookable.filter(w => w.day === s.day);
+                        const isOpen = facultyWindows.length > 0;
+
                         html += `
                             <div class="availability-row">
                                 <div>
-                                    <div class="availability-faculty">${s.displayName}</div>
-                                    <div class="availability-detail">${s.fullDepartment}</div>
+                                    <div class="availability-faculty">${escapeHtml(s.displayName)}</div>
+                                    <div class="availability-detail">${escapeHtml(s.fullDepartment || s.department || '')}</div>
                                 </div>
                                 <div>
-                                    <div class="availability-detail">${s.day}</div>
-                                    <div class="availability-detail">${s.time}</div>
+                                    <div class="availability-detail">${escapeHtml(s.day)}</div>
+                                    <div class="availability-detail">${escapeHtml(s.time)}</div>
                                 </div>
                                 <div>
-                                    <div class="stat-label">${s.slots} slot(s) open</div>
-                                    <button class="book-slot-btn" onclick="bookSlot(${s.id}, '${s.displayName.replace(/'/g, "\\'")}', '${s.day}', '${s.time}')">Book Slot</button>
+                                    ${isOpen
+                                        ? `<div class="stat-label">${facultyWindows.length} time(s) open</div>
+                                           <button class="book-slot-btn" type="button" data-slot-id="${s.id}">Book Slot</button>`
+                                        : `<div class="stat-label">Fully booked</div>
+                                           <button class="book-slot-btn" type="button" disabled>Unavailable</button>`}
                                 </div>
                             </div>
                         `;
@@ -216,15 +252,94 @@
             container.innerHTML = html;
         }
 
-        function bookSlot(id, faculty, day, time) {
-            if (confirm(`Book a consultation with ${faculty} on ${day} (${time})?`)) {
-                // Redirect to request form with data pre-selected via query params
-                const params = new URLSearchParams({ faculty, day, time });
-                window.location.href = 'my-requests.html?' + params.toString();
+        /**
+         * Show the date/time picker for a faculty member (FR5).
+         * Options come straight from the faculty's published availability and
+         * already exclude slots that are full or overlap existing bookings.
+         */
+        function bookSlot(id) {
+            const slot = window.studentFunctions.getAllFaculty().find(s => s.id === id);
+            if (!slot) return;
+
+            const facultyName = slot.faculty || slot.displayName;
+            const windows = window.studentFunctions.getBookableSlots(facultyName);
+            if (windows.length === 0) {
+                alert('No bookable times remain for this faculty member. Please try another faculty or check back later.');
+                return;
             }
+
+            const picker = document.getElementById('slotPicker');
+            document.getElementById('slotPickerFaculty').textContent = facultyName;
+            document.getElementById('slotPickerDay').textContent = slot.day + ' hours: ' + slot.time;
+
+            const dateSelect = document.getElementById('slotPickerDate');
+            const timeSelect = document.getElementById('slotPickerTime');
+            const dates = Array.from(new Set(windows.map(w => w.date)));
+
+            dateSelect.innerHTML = dates
+                .map(d => `<option value="${escapeHtml(d)}">${escapeHtml(formatSlotDate(d))}</option>`)
+                .join('');
+            fillSlotTimes();
+            timeSelect.value = timeSelect.value || (timeSelect.options[0] && timeSelect.options[0].value);
+
+            picker.style.display = 'block';
+            picker.classList.add('active');
+            picker.setAttribute('aria-hidden', 'false');
+            document.getElementById('slotPickerBody').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
 
-        document.addEventListener('DOMContentLoaded', renderAvailability);
+        function fillSlotTimes() {
+            const facultyName = document.getElementById('slotPickerFaculty').textContent;
+            const date = document.getElementById('slotPickerDate').value;
+            const windows = window.studentFunctions.getBookableSlots(facultyName)
+                .filter(w => w.date === date);
+
+            const timeSelect = document.getElementById('slotPickerTime');
+            if (windows.length === 0) {
+                timeSelect.innerHTML = '<option value="">No times left on this date</option>';
+                return;
+            }
+            timeSelect.innerHTML = windows
+                .map(w => `<option value="${escapeHtml(w.time)}">${escapeHtml(w.time)}${w.remaining ? ` (${w.remaining} left)` : ''}</option>`)
+                .join('');
+        }
+
+        function formatSlotDate(iso) {
+            const parts = String(iso).split('-');
+            if (parts.length !== 3) return iso;
+            const date = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+            if (isNaN(date.getTime())) return iso;
+            return date.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+        }
+
+        function closeSlotPicker() {
+            const picker = document.getElementById('slotPicker');
+            picker.classList.remove('active');
+            picker.style.display = 'none';
+            picker.setAttribute('aria-hidden', 'true');
+        }
+
+        function confirmSlotBooking() {
+            const facultyName = document.getElementById('slotPickerFaculty').textContent;
+            const date = document.getElementById('slotPickerDate').value;
+            const time = document.getElementById('slotPickerTime').value;
+
+            if (!date || !time) {
+                alert('Please select an available date and time.');
+                return;
+            }
+
+            const params = new URLSearchParams({ faculty: facultyName, date: date, time: time });
+            window.location.href = 'my-requests.html?' + params.toString();
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            renderAvailability();
+            document.getElementById('departmentSections').addEventListener('click', function (e) {
+                const btn = e.target.closest('.book-slot-btn');
+                if (btn) bookSlot(parseInt(btn.dataset.slotId, 10));
+            });
+        });
     </script>
 </body>
 </html>

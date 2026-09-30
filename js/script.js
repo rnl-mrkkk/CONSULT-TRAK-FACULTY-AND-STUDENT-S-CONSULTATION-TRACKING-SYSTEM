@@ -60,6 +60,23 @@ function isValidEmail(email) {
 }
 
 /**
+ * Escape text for safe interpolation into innerHTML.
+ * Use for any value that originates from a form, localStorage, or
+ * the session - user-supplied data must never reach innerHTML raw.
+ */
+function escapeHtml(value) {
+    if (value === null || value === undefined) return '';
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+window.escapeHtml = escapeHtml;
+
+/**
  * Store data in localStorage with error handling
  */
 function safeLocalStorageSet(key, value) {
@@ -172,26 +189,83 @@ function getUserRole() {
 // AUTHENTICATION
 // ========================================
 
+// The account store written by the admin screens (FR1/FR2)
+const ACCOUNTS_STORAGE_KEY = 'ct_accounts';
+// Shared default password for every account in this demo system
+const DEFAULT_PASSWORD = 'dummy123';
+
 /**
- * Dummy login function (for demo purposes)
- * Returns the role if credentials are valid, null otherwise
+ * Canonical first-run account seed.
+ *
+ * This lives in script.js (loaded on every page, including login) so the demo
+ * accounts exist before any admin page is opened. Without it a fresh browser
+ * could never log in, because the admin page that would otherwise seed the
+ * store is itself behind a login.
+ */
+const SEED_ACCOUNTS = [
+    { id: 1, name: 'John Smith', email: 'student@dummy.com', role: 'student', status: 'active', department: 'Computer Science', studentId: 'STU001', createdAt: '2025-09-01' },
+    { id: 2, name: 'Emily Davis', email: 'emily.davis@dummy.com', role: 'student', status: 'active', department: 'Engineering', studentId: 'STU002', createdAt: '2025-09-02' },
+    { id: 3, name: 'Mr. Jaafar Omar', email: 'faculty@dummy.com', role: 'faculty', status: 'active', department: 'SOCS', createdAt: '2024-01-15' },
+    { id: 4, name: 'Mrs. Elsie Ybanez', email: 'elsie.ybanez@dummy.com', role: 'faculty', status: 'active', department: 'SOCS', createdAt: '2024-01-20' },
+    { id: 5, name: 'David Lee', email: 'david.lee@dummy.com', role: 'student', status: 'inactive', department: 'Physics', studentId: 'STU003', createdAt: '2025-09-05' },
+    { id: 6, name: 'Dr. Julito V. Mandac Jr.', email: 'julito.mandac@dummy.com', role: 'faculty', status: 'active', department: 'SBM', createdAt: '2024-02-01' },
+    { id: 7, name: 'Robert Garcia', email: 'robert.garcia@dummy.com', role: 'student', status: 'active', department: 'Biology', studentId: 'STU004', createdAt: '2025-09-10' },
+    { id: 8, name: 'Mrs. Shinikie Dangasi', email: 'shinikie.dangasi@dummy.com', role: 'faculty', status: 'active', department: 'SOCS', createdAt: '2024-02-15' },
+    { id: 9, name: 'Administrator', email: 'admin@dummy.com', role: 'admin', status: 'active', department: 'Administration', createdAt: '2024-01-01' }
+];
+
+// Single source of truth shared with the admin page
+if (typeof window !== 'undefined') window.ctSeedAccounts = SEED_ACCOUNTS;
+
+/**
+ * Read the account store, seeding the demo accounts on first run.
+ */
+function readAccounts() {
+    try {
+        const stored = safeLocalStorageGet(ACCOUNTS_STORAGE_KEY);
+        if (!stored) {
+            const seed = JSON.parse(JSON.stringify(SEED_ACCOUNTS));
+            safeLocalStorageSet(ACCOUNTS_STORAGE_KEY, JSON.stringify(seed));
+            return seed;
+        }
+        const parsed = JSON.parse(stored);
+        return Array.isArray(parsed) ? parsed : null;
+    } catch (e) {
+        return null;
+    }
+}
+
+/**
+ * Look up credentials in the account store.
+ *
+ * Every account in this system shares one demo password, so authentication
+ * checks the account exists and is active rather than comparing a stored
+ * secret. This is a demo-grade check, not real security.
+ *
+ * @returns {{role, name, studentId, department, accountId, needsPasswordReset}|null}
  */
 function mockLogin(username, password) {
-    // Demo credentials - dummy123 for all accounts
-    const validCredentials = {
-        'admin@dummy.com': { password: 'dummy123', role: 'admin', name: 'Administrator' },
-        'faculty@dummy.com': { password: 'dummy123', role: 'faculty', name: 'Faculty Member' },
-        'student@dummy.com': { password: 'dummy123', role: 'student', name: 'Student' }
+    const lowerUsername = String(username || '').toLowerCase().trim();
+    if (!lowerUsername || !password) return null;
+
+    const accounts = readAccounts();
+    if (!accounts) return null;
+
+    const account = accounts.find(a => String(a.email || '').toLowerCase() === lowerUsername);
+    if (!account) return null;
+
+    // Deactivated accounts cannot sign in
+    if (account.status === 'inactive') return { deactivated: true };
+
+    if (password !== DEFAULT_PASSWORD) return null;
+
+    return {
+        role: account.role,
+        name: account.name,
+        studentId: account.studentId || null,
+        department: account.department || null,
+        accountId: account.id
     };
-
-    const lowerUsername = username.toLowerCase().trim();
-    const validUser = validCredentials[lowerUsername];
-
-    if (validUser && validUser.password === password) {
-        return validUser;
-    }
-
-    return null;
 }
 
 /**
@@ -367,6 +441,12 @@ function handleLoginSubmit(event) {
     setTimeout(() => {
         const userData = mockLogin(username, password);
 
+        if (userData && userData.deactivated) {
+            showError('username', 'This account has been deactivated. Please contact the administrator.');
+            resetLoginButton(loginBtn);
+            return;
+        }
+
         if (userData) {
             // Handle "Remember Me"
             if (rememberMe) {
@@ -377,11 +457,24 @@ function handleLoginSubmit(event) {
 
             // Store user session
             safeLocalStorageSet('userSession', JSON.stringify({
-                username: username,
+                username: username.toLowerCase().trim(),
                 role: userData.role,
                 name: userData.name,
+                studentId: userData.studentId,
+                department: userData.department,
+                accountId: userData.accountId,
                 loginTime: new Date().toISOString()
             }));
+
+            // Keep the faculty profile in sync so availability records
+            // can be attributed to the signed-in member (FR5/FR7)
+            if (userData.role === 'faculty') {
+                safeLocalStorageSet('ct_faculty_info', JSON.stringify({
+                    name: userData.name,
+                    email: username.toLowerCase().trim(),
+                    department: userData.department
+                }));
+            }
 
             // Redirect to role-specific dashboard
             window.location.href = getRoleDashboardHref(userData.role);
@@ -390,12 +483,16 @@ function handleLoginSubmit(event) {
             showError('password', 'Invalid credentials. Please try again.');
 
             // Reset loading state
-            if (loginBtn) {
-                loginBtn.classList.remove('loading');
-                loginBtn.disabled = false;
-            }
+            resetLoginButton(loginBtn);
         }
     }, 800);
+}
+
+function resetLoginButton(loginBtn) {
+    if (loginBtn) {
+        loginBtn.classList.remove('loading');
+        loginBtn.disabled = false;
+    }
 }
 
 /**
@@ -403,7 +500,7 @@ function handleLoginSubmit(event) {
  */
 function handleForgotPassword(event) {
     event.preventDefault();
-    alert('Password reset functionality would be implemented here.\n\nDemo accounts:\n• admin@dummy.com / dummy123\n• faculty@dummy.com / dummy123\n• student@dummy.com / dummy123');
+    alert('Password reset is not available in this demo.\n\nAll accounts use the password: dummy123\n\nDemo accounts:\n• admin@dummy.com\n• faculty@dummy.com\n• student@dummy.com');
 }
 
 // ========================================
@@ -437,6 +534,15 @@ function initDashboardPage() {
     const userNameEl = getElement('userName');
     if (userNameEl && userData.name) {
         userNameEl.textContent = userData.name;
+    }
+    const sidebarNameEl = document.querySelector('.sidebar-user-name');
+    if (sidebarNameEl && userData.name) {
+        sidebarNameEl.textContent = userData.name;
+    }
+    const sidebarAvatarEl = document.querySelector('.sidebar-user-avatar');
+    if (sidebarAvatarEl && userData.name) {
+        const initials = userData.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+        sidebarAvatarEl.textContent = initials || 'U';
     }
 
     // Logout functionality
@@ -606,6 +712,64 @@ function handleLogout(event) {
 }
 
 // ========================================
+// PAGE ACCESS CONTROL
+// ========================================
+
+/**
+ * Guard every page before it renders (FR2).
+ *
+ * Redirects to the login page when there is no session, and to the user's own
+ * dashboard when they try to open a page belonging to another role. Returns
+ * false so callers can stop running page scripts.
+ *
+ * @returns {boolean}
+ */
+function requireRoleForPage() {
+    if (!requireAuth()) return false;
+
+    const user = getCurrentUser();
+    if (!user) {
+        window.location.href = getLoginHref();
+        return false;
+    }
+
+    const pageRole = document.body.getAttribute('data-role');
+    if (pageRole && user.role !== pageRole) {
+        window.location.href = getRoleDashboardHref(user.role);
+        return false;
+    }
+
+    // FR2: hide navigation the current role cannot use
+    applyRoleNavigation(user.role);
+    return true;
+}
+
+/**
+ * Hide sidebar links the signed-in role cannot reach, so the GUI does not
+ * offer pages that the role check would block anyway.
+ */
+function applyRoleNavigation(role) {
+    const allowed = ROLE_NAV[role] || [];
+    document.querySelectorAll('.nav-item').forEach(link => {
+        const href = link.getAttribute('href') || '';
+        const isAllowed = allowed.some(page => href.includes(page));
+        if (!isAllowed) {
+            link.style.display = 'none';
+        }
+    });
+}
+
+/**
+ * Page filenames each role is allowed to open.
+ * Used by applyRoleNavigation to hide unreachable menu entries.
+ */
+const ROLE_NAV = {
+    student: ['dashboard.html', 'my-requests.html', 'faculty-availability.html', 'appointments.html', 'history.html'],
+    faculty: ['dashboard.html', 'consultation-requests.html', 'availability.html', 'consultation-records.html', 'history.html', 'reports.html'],
+    admin: ['dashboard.html', 'manage-accounts.html', 'consultation-records.html', 'reports.html']
+};
+
+// ========================================
 // INITIALIZATION
 // ========================================
 
@@ -625,6 +789,10 @@ function initializePage() {
         if (isLoginPage) {
             initLoginPage();
         } else {
+            // FR2: block the page from rendering for anyone without the right role
+            if (!requireRoleForPage()) {
+                return;
+            }
             initDashboardPage();
         }
     }
@@ -640,6 +808,8 @@ if (typeof module !== 'undefined' && module.exports) {
         validateLoginForm,
         mockLogin,
         getCurrentUser,
-        requireAuth
+        requireAuth,
+        requireRole,
+        requireRoleForPage
     };
 }

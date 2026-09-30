@@ -13,8 +13,8 @@
         <div class="navbar-container">
             <div class="navbar-user">
                 <div class="user-info">
-                    <div class="role">Juan Dela Cruz</div>
-                    <div class="dept">BS Information Technology</div>
+                    <div class="role">Jenny Panther</div>
+                    <div class="dept">Student</div>
                 </div>
                 <button class="notification-bell" aria-label="Notifications">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
@@ -35,10 +35,10 @@
                 <h1 class="brand-name">CONSULT-TRAK</h1>
             </a>
             <div class="sidebar-user-card">
-                <div class="sidebar-user-avatar">JDC</div>
+                <div class="sidebar-user-avatar">JP</div>
                 <div class="sidebar-user-info">
-                    <span class="sidebar-user-name">Juan Dela Cruz</span>
-                    <span class="sidebar-user-dept">BS Information Technology</span>
+                    <span class="sidebar-user-name">Jenny Panther</span>
+                    <span class="sidebar-user-dept">Student</span>
                 </div>
                 <svg class="sidebar-user-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
             </div>
@@ -125,20 +125,20 @@
             }
 
             timeline.innerHTML = filtered.map(h => `
-                <div class="history-item ${h.status}">
-                    <div style="display:flex; justify-content:space-between; align-items:center; gap:var(--space-md);">
-                        <div>
-                            <strong>${h.subject}</strong> <span class="stat-label">with ${h.faculty}</span>
+                <article class="history-item ${escapeHtml(h.status)}">
+                    <div class="history-item-header">
+                        <div class="history-item-title">
+                            <strong>${escapeHtml(h.subject)}</strong> <span class="stat-label">with ${escapeHtml(h.faculty)}</span>
                         </div>
-                        <span class="status-badge ${h.status}">${h.status.charAt(0).toUpperCase() + h.status.slice(1)}</span>
+                        <span class="status-badge ${escapeHtml(h.status)}">${escapeHtml(h.status.charAt(0).toUpperCase() + h.status.slice(1))}</span>
                     </div>
-                    <div class="appointment-details" style="margin: var(--space-sm) 0;">
-                        <span class="meta-icon">${window.ctIcon('calendar', 14)} ${h.date}</span>
-                        <span class="meta-icon">${window.ctIcon('clock', 14)} ${h.time}</span>
-                        <span class="meta-icon">${window.ctIcon('clock', 14)} ${h.duration}</span>
+                    <div class="appointment-details history-item-meta">
+                        <span class="meta-icon">${window.ctIcon('calendar', 14)} ${escapeHtml(h.date)}</span>
+                        <span class="meta-icon">${window.ctIcon('clock', 14)} ${escapeHtml(h.time)}</span>
+                        <span class="meta-icon">${window.ctIcon('clock', 14)} ${escapeHtml(h.duration)}</span>
                     </div>
-                    <div class="activity-title" style="font-size: var(--font-size-sm);">${h.outcome}</div>
-                </div>
+                    <p class="history-item-outcome">${escapeHtml(h.outcome)}</p>
+                </article>
             `).join('');
         }
 

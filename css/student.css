@@ -3,6 +3,10 @@
    ======================================== */
 
 /* Filter label styling */
+.filter-bar {
+    margin-bottom: var(--space-xl);
+}
+
 .filter-label {
     background: var(--color-surface-hover);
     padding: var(--space-xs) var(--space-md);
@@ -117,6 +121,32 @@
 }
 
 /* Appointment cards */
+.schedule-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-lg);
+    padding: var(--space-lg);
+    margin-bottom: var(--space-md);
+    background: var(--color-surface-hover);
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-md);
+}
+
+.schedule-item:last-child {
+    margin-bottom: 0;
+}
+
+.schedule-time {
+    min-width: 100px;
+    color: var(--color-primary);
+    font-size: var(--font-size-base);
+    font-weight: 700;
+}
+
+.schedule-details { flex: 1; }
+.schedule-student { color: var(--color-text-primary); font-weight: 600; }
+.schedule-subject { margin-top: var(--space-xs); color: var(--color-text-secondary); font-size: var(--font-size-sm); }
+
 .appointment-card {
     background: var(--color-surface);
     border: 1px solid var(--color-border);
@@ -127,7 +157,7 @@
 }
 
 .appointment-card.scheduled {
-    border-left-color: var(--color-success);
+    border-left-color: var(--color-info);
 }
 
 .appointment-card.pending {
@@ -170,34 +200,73 @@
 /* History timeline */
 .history-timeline {
     position: relative;
-    padding-left: var(--space-xl);
+    padding-left: 38px;
 }
 
 .history-timeline::before {
     content: '';
     position: absolute;
-    left: 8px;
-    top: 0;
-    bottom: 0;
+    left: 7px;
+    top: 20px;
+    bottom: 20px;
     width: 2px;
     background: var(--color-border);
 }
 
 .history-item {
     position: relative;
-    padding-bottom: var(--space-xl);
+    margin-bottom: var(--space-md);
+    padding: var(--space-md) var(--space-lg);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
 }
 
 .history-item::before {
     content: '';
     position: absolute;
-    left: calc(-1 * var(--space-xl) + 4px);
-    top: 4px;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
+    left: -31px;
+    top: 25px;
+    width: 31px;
+    height: 3px;
+    border-radius: var(--radius-pill);
     background: var(--color-primary);
-    border: 2px solid var(--color-surface);
+}
+
+.history-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-md);
+}
+
+.history-item-title {
+    color: var(--color-text-primary);
+    line-height: 1.45;
+}
+
+.history-item-meta {
+    margin: var(--space-md) 0 var(--space-sm);
+    gap: var(--space-md);
+}
+
+.history-item-outcome {
+    margin: 0;
+    padding-top: var(--space-sm);
+    border-top: 1px solid var(--color-border-light);
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    line-height: 1.55;
+}
+
+@media (max-width: 600px) {
+    .schedule-item { align-items: flex-start; flex-direction: column; gap: var(--space-sm); }
+    .schedule-time { min-width: 0; }
+    .history-timeline { padding-left: 32px; }
+    .history-timeline::before { left: 4px; }
+    .history-item { padding: var(--space-md); }
+    .history-item::before { left: -28px; width: 28px; }
+    .history-item-header { align-items: flex-start; }
 }
 
 .history-item.scheduled::before {

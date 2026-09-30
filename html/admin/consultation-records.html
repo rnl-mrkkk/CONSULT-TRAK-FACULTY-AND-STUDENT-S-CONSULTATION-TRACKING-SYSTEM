@@ -72,7 +72,7 @@
             </div>
 
             <div class="filter-bar">
-                <input type="text" id="searchInput" class="form-input" placeholder="Search by student, faculty, or subject...">
+                <input type="text" id="searchInput" class="form-input" placeholder="Search student, faculty, subject, keyword...">
                 <select id="statusFilter" class="form-select">
                     <option value="all">All Status</option>
                     <option value="scheduled">Scheduled</option>
@@ -81,6 +81,15 @@
                     <option value="cancelled">Cancelled</option>
                     <option value="rejected">Rejected</option>
                 </select>
+                <select id="facultyFilter" class="form-select">
+                    <option value="all">All Faculty</option>
+                </select>
+                <label class="form-label filter-label" style="margin: 0;">From</label>
+                <input type="date" id="dateFromFilter" class="form-input">
+                <label class="form-label filter-label" style="margin: 0;">To</label>
+                <input type="date" id="dateToFilter" class="form-input">
+                <button class="action-btn secondary" onclick="resetFilters()">Reset</button>
+                <button class="action-btn primary" onclick="exportRecordsCSV()">Export CSV</button>
             </div>
 
             <div class="content-card">
@@ -99,6 +108,7 @@
                                 <th>Time</th>
                                 <th>Status</th>
                                 <th>Notes</th>
+                                <th>Recommendations</th>
                             </tr>
                         </thead>
                         <tbody id="recordsTableBody">
@@ -132,42 +142,92 @@
 
         let records = [];
 
+        function currentFilters() {
+            return {
+                search: document.getElementById('searchInput').value,
+                status: document.getElementById('statusFilter').value,
+                faculty: document.getElementById('facultyFilter').value,
+                dateFrom: document.getElementById('dateFromFilter').value,
+                dateTo: document.getElementById('dateToFilter').value
+            };
+        }
+
         function renderRecords(recordsToShow) {
             const tbody = document.getElementById('recordsTableBody');
-            const list = recordsToShow || records;
+            const list = recordsToShow || [];
             document.getElementById('recordCount').textContent = list.length + ' record(s)';
+
+            if (list.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">${window.ctIcon('note', 40)}</div>
+                                <div class="empty-state-title">No consultation records found</div>
+                                <div class="empty-state-text">Try adjusting your search or filters.</div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
 
             tbody.innerHTML = list.map(c => `
                 <tr>
-                    <td>${c.student}</td>
-                    <td>${c.faculty}</td>
-                    <td>${c.subject}</td>
-                    <td>${c.date}</td>
-                    <td>${c.time}</td>
-                    <td><span class="status-badge ${c.status}">${c.status.charAt(0).toUpperCase() + c.status.slice(1)}</span></td>
-                    <td>${c.notes || '—'}</td>
+                    <td>${escapeHtml(c.student)}${c.studentId ? `<div class="availability-detail">${escapeHtml(c.studentId)}</div>` : ''}</td>
+                    <td>${escapeHtml(c.faculty)}</td>
+                    <td>${escapeHtml(c.subject)}</td>
+                    <td>${escapeHtml(c.date || '—')}</td>
+                    <td>${escapeHtml(c.time || '—')}</td>
+                    <td><span class="status-badge ${escapeHtml(c.status)}">${escapeHtml(c.status.charAt(0).toUpperCase() + c.status.slice(1))}</span></td>
+                    <td>${escapeHtml(c.notes) || '—'}</td>
+                    <td>${escapeHtml(c.recommendations) || '—'}</td>
                 </tr>
             `).join('');
         }
 
         function applyFilters() {
-            const search = document.getElementById('searchInput').value.toLowerCase();
-            const status = document.getElementById('statusFilter').value;
-            const filtered = records.filter(c => {
-                const matchSearch = c.student.toLowerCase().includes(search) ||
-                                    c.faculty.toLowerCase().includes(search) ||
-                                    c.subject.toLowerCase().includes(search);
-                const matchStatus = status === 'all' || c.status === status;
-                return matchSearch && matchStatus;
-            });
-            renderRecords(filtered);
+            renderRecords(window.adminFunctions.getConsultationData(currentFilters()));
         }
 
-        window.addEventListener('load', () => {
+        function populateFacultyFilter() {
+            const select = document.getElementById('facultyFilter');
+            const names = window.adminFunctions.getFacultyList(records);
+            select.innerHTML = '<option value="all">All Faculty</option>' +
+                names.map(n => `<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join('');
+        }
+
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('statusFilter').value = 'all';
+            document.getElementById('facultyFilter').value = 'all';
+            document.getElementById('dateFromFilter').value = '';
+            document.getElementById('dateToFilter').value = '';
+            applyFilters();
+        }
+
+        function exportRecordsCSV() {
+            const rows = window.adminFunctions.getConsultationData(currentFilters());
+            if (rows.length === 0) {
+                alert('No records match the current filters, so there is nothing to export.');
+                return;
+            }
+            const report = { rows };
+            window.adminFunctions.downloadCSV('consultation-records.csv', window.adminFunctions.toCSV(report));
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!window.requireRole || !window.requireRole('admin')) return;
+
             records = window.adminFunctions.getConsultationData();
-            renderRecords();
+            populateFacultyFilter();
+            applyFilters();
+
             document.getElementById('searchInput').addEventListener('input', applyFilters);
             document.getElementById('statusFilter').addEventListener('change', applyFilters);
+            document.getElementById('facultyFilter').addEventListener('change', applyFilters);
+            document.getElementById('dateFromFilter').addEventListener('change', applyFilters);
+            document.getElementById('dateToFilter').addEventListener('change', applyFilters);
         });
     </script>
 </body>

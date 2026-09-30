@@ -6,15 +6,15 @@
     <title>Reports | CONSULT-TRAK</title>
     <link rel="stylesheet" href="../../css/style.css">
     <link rel="stylesheet" href="../../css/dashboard.css">
-    <link rel="stylesheet" href="../../css/admin.css">
+    <link rel="stylesheet" href="../../css/faculty.css">
 </head>
-<body data-role="admin">
+<body data-role="faculty">
     <nav class="navbar">
         <div class="navbar-container">
             <div class="navbar-user">
                 <div class="user-info">
-                    <div class="role">Administrator</div>
-                    <div class="dept">System Admin</div>
+                    <div class="role">Faculty Member</div>
+                    <div class="dept">Computer Science</div>
                 </div>
                 <button class="notification-bell" aria-label="Notifications">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
@@ -35,10 +35,10 @@
                 <h1 class="brand-name">CONSULT-TRAK</h1>
             </a>
             <div class="sidebar-user-card">
-                <div class="sidebar-user-avatar">AD</div>
+                <div class="sidebar-user-avatar">FM</div>
                 <div class="sidebar-user-info">
-                    <span class="sidebar-user-name">Administrator</span>
-                    <span class="sidebar-user-dept">System Admin</span>
+                    <span class="sidebar-user-name">Faculty Member</span>
+                    <span class="sidebar-user-dept">Computer Science</span>
                 </div>
                 <svg class="sidebar-user-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
             </div>
@@ -47,16 +47,25 @@
                     <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11 12 3l9 8"/><path d="M5 10v11h14V10"/></svg></span>
                     <span class="nav-label">Dashboard</span>
                 </a>
-                <a href="manage-accounts.html" class="nav-item" data-page="manage-accounts">
-                    <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
-                    <span class="nav-label">Manage Accounts</span>
+                <a href="consultation-requests.html" class="nav-item" data-page="consultation-requests">
+                    <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg></span>
+                    <span class="nav-label">Consultation Requests</span>
+                </a>
+                <a href="availability.html" class="nav-item" data-page="availability">
+                    <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l6 2"/></svg></span>
+                    <span class="nav-label">Availability</span>
                 </a>
                 <a href="consultation-records.html" class="nav-item" data-page="consultation-records">
-                    <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h2M3 12h2M3 18h2"/></svg></span>
+                    <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg></span>
                     <span class="nav-label">Consultation Records</span>
                 </a>
-                <a href="reports.html" class="nav-item" data-page="reports">
-                    <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 16v-5M12 16V8M17 16v-9"/></svg></span>
+                <a href="history.html" class="nav-item" data-page="history">
+                    <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v6h6"/><path d="M3.51 9a9 9 0 1 0 2.13-5.36"/><path d="M12 7v5l3 2"/></svg></span>
+                    <span class="nav-label">History</span>
+                </a>
+
+                <a href="reports.html" class="nav-item active" data-page="reports">
+                    <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 15l3-4 3 3 5-7"/></svg></span>
                     <span class="nav-label">Reports</span>
                 </a>
             </nav>
@@ -67,8 +76,8 @@
 
         <main class="main-content">
             <div class="page-header">
-                <h2 class="page-title">Reports</h2>
-                <p class="page-subtitle">Generate consultation reports and summaries (FR-012)</p>
+                <h2 class="page-title">My Reports</h2>
+                <p class="page-subtitle">Summaries of your own consultations (FR-012)</p>
             </div>
 
             <div class="filter-bar">
@@ -84,48 +93,64 @@
                     <span class="form-label" style="margin: 0;">to</span>
                     <input type="date" id="customTo" class="form-input">
                 </div>
-                <button class="action-btn primary" onclick="exportReportCSV()">Export Detail CSV</button>
-                <button class="action-btn secondary" onclick="exportReportSummaryCSV()">Export Summary CSV</button>
+                <button class="action-btn primary" onclick="exportReportCSV()">Export CSV</button>
                 <button class="action-btn secondary" onclick="printReport()">Print / PDF</button>
             </div>
             <p class="form-hint" id="reportRangeLabel" style="margin-bottom: var(--space-lg);"></p>
 
-            <!-- Consultation Status Chart -->
-            <div class="chart-container">
-                <h3 class="card-title" style="margin-bottom: var(--space-lg);">Consultations by Status</h3>
-                <div id="statusChart"><!-- Filled by JS --></div>
+            <!-- Totals -->
+            <div class="stats-grid" style="margin-bottom: var(--space-xl);">
+                <div class="stat-card">
+                    <div class="stat-value" id="statTotal">0</div>
+                    <div class="stat-label">Total Consultations</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="statCompleted">0</div>
+                    <div class="stat-label">Completed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="statPending">0</div>
+                    <div class="stat-label">Pending</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="statCancelled">0</div>
+                    <div class="stat-label">Cancelled</div>
+                </div>
             </div>
 
-            <!-- Consultations by Faculty Chart -->
+            <!-- By status -->
             <div class="chart-container">
-                <h3 class="card-title" style="margin-bottom: var(--space-lg);">Consultations by Faculty</h3>
-                <div id="facultyChart"><!-- Filled by JS --></div>
+                <h3 class="card-title" style="margin-bottom: var(--space-lg);">My Consultations by Status</h3>
+                <div id="statusChart"></div>
             </div>
 
-            <!-- Summary Table -->
+            <!-- By date -->
+            <div class="chart-container">
+                <h3 class="card-title" style="margin-bottom: var(--space-lg);">My Consultations by Date</h3>
+                <div id="dateChart"></div>
+            </div>
+
+            <!-- Detail table -->
             <div class="content-card">
                 <div class="card-header">
-                    <h3 class="card-title">Summary</h3>
+                    <h3 class="card-title">Consultation Detail</h3>
+                    <span class="stat-label" id="detailCount"></span>
                 </div>
                 <div class="card-body no-padding">
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th>Faculty</th>
-                                <th>Total Consultations</th>
-                                <th>Completed</th>
-                                <th>Scheduled</th>
-                                <th>Pending</th>
-                                <th>Cancelled</th>
-                                <th>Rejected</th>
+                                <th>Date</th>
+                                <th>Student</th>
+                                <th>Subject</th>
+                                <th>Time</th>
+                                <th>Status</th>
+                                <th>Details</th>
                             </tr>
                         </thead>
-                        <tbody id="summaryBody">
+                        <tbody id="detailBody">
                             <!-- Filled by JS -->
                         </tbody>
-                        <tfoot>
-                            <tr id="totalsRow" style="display: none;"></tr>
-                        </tfoot>
                     </table>
                 </div>
             </div>
@@ -133,7 +158,7 @@
     </div>
 
     <script src="../../js/script.js"></script>
-    <script src="../../js/admin.js"></script>
+    <script src="../../js/faculty.js"></script>
     <script>
         function toggleTheme() {
             const root = document.documentElement;
@@ -162,18 +187,21 @@
                     to: document.getElementById('customTo').value
                 };
             }
-            return window.adminFunctions.resolveDateRange(period);
+            return window.facultyFunctions.resolveDateRange(period);
         }
 
-        function renderReports() {
+        function renderReport() {
             const range = currentRange();
-            const data = window.adminFunctions.getReportData({ from: range.from, to: range.to });
+            const data = window.facultyFunctions.getReportData({ from: range.from, to: range.to });
             currentReport = data;
 
-            const rangeLabel = range.from
-                ? range.from + ' to ' + (range.to || 'today')
-                : 'All time';
-            document.getElementById('reportRangeLabel').textContent = rangeLabel + ' • ' + data.total + ' consultation(s)';
+            const rangeLabel = range.from ? range.from + ' to ' + (range.to || 'today') : 'All time';
+            document.getElementById('reportRangeLabel').textContent = rangeLabel + ' — ' + data.total + ' consultation(s)';
+
+            document.getElementById('statTotal').textContent = data.total;
+            document.getElementById('statCompleted').textContent = data.statusCounts.completed;
+            document.getElementById('statPending').textContent = data.statusCounts.pending;
+            document.getElementById('statCancelled').textContent = data.statusCounts.cancelled;
 
             // By status
             const statusLabels = { pending: 'Pending', scheduled: 'Scheduled', completed: 'Completed', cancelled: 'Cancelled', rejected: 'Rejected' };
@@ -188,100 +216,70 @@
                 </div>
             `).join('');
 
-            // By faculty
-            const facultyEntries = Object.entries(data.facultyConsultations);
-            const maxFaculty = Math.max(...facultyEntries.map(e => e[1].total), 1);
-            const facultyChart = document.getElementById('facultyChart');
-            if (facultyEntries.length === 0) {
-                facultyChart.innerHTML = `
+            // By date
+            const dateEntries = Object.entries(data.byDate).sort();
+            const maxDate = Math.max(...dateEntries.map(e => e[1]), 1);
+            const dateChart = document.getElementById('dateChart');
+            if (dateEntries.length === 0) {
+                dateChart.innerHTML = `
                     <div class="empty-state">
                         <div class="empty-state-title">No consultations in this range</div>
                         <div class="empty-state-text">Try widening the date range.</div>
                     </div>
                 `;
             } else {
-                facultyChart.innerHTML = facultyEntries.map(([faculty, s]) => `
+                dateChart.innerHTML = dateEntries.map(([date, count]) => `
                     <div class="chart-bar">
-                        <div class="chart-label">${escapeHtml(faculty)}</div>
+                        <div class="chart-label">${escapeHtml(date)}</div>
                         <div class="chart-track">
-                            <div class="chart-fill" style="width: ${(s.total / maxFaculty * 100)}%"></div>
+                            <div class="chart-fill" style="width: ${(count / maxDate * 100)}%"></div>
                         </div>
-                        <div class="chart-value">${s.total}</div>
+                        <div class="chart-value">${count}</div>
                     </div>
                 `).join('');
             }
 
-            // Summary table
-            const summaryBody = document.getElementById('summaryBody');
-            if (facultyEntries.length === 0) {
-                summaryBody.innerHTML = `
+            // Detail table
+            document.getElementById('detailCount').textContent = data.rows.length + ' consultation(s)';
+            const tbody = document.getElementById('detailBody');
+            if (data.rows.length === 0) {
+                tbody.innerHTML = `
                     <tr>
-                        <td colspan="7">
+                        <td colspan="6">
                             <div class="empty-state">
-                                <div class="empty-state-title">No data to summarize</div>
-                                <div class="empty-state-text">No consultations match the selected period.</div>
+                                <div class="empty-state-icon">${window.ctIcon('note', 40)}</div>
+                                <div class="empty-state-title">No consultations to report</div>
+                                <div class="empty-state-text">Nothing matches the selected period yet.</div>
                             </div>
                         </td>
                     </tr>
                 `;
             } else {
-                summaryBody.innerHTML = facultyEntries.map(([faculty, s]) => `
+                tbody.innerHTML = data.rows.map(row => `
                     <tr>
-                        <td>${escapeHtml(faculty)}</td>
-                        <td>${s.total}</td>
-                        <td>${s.completed}</td>
-                        <td>${s.scheduled}</td>
-                        <td>${s.pending}</td>
-                        <td>${s.cancelled}</td>
-                        <td>${s.rejected}</td>
+                        <td>${escapeHtml(row.date || '—')}</td>
+                        <td>${escapeHtml(row.student)}</td>
+                        <td>${escapeHtml(row.subject)}</td>
+                        <td>${escapeHtml(row.time || '—')}</td>
+                        <td><span class="status-badge ${escapeHtml(row.status)}">${escapeHtml(row.status.charAt(0).toUpperCase() + row.status.slice(1))}</span></td>
+                        <td>${escapeHtml(row.detail) || '—'}</td>
                     </tr>
                 `).join('');
-            }
-
-            // Totals row
-            const totals = data.statusCounts;
-            const totalsRow = document.getElementById('totalsRow');
-            if (facultyEntries.length > 0) {
-                totalsRow.style.display = '';
-                totalsRow.innerHTML = `
-                    <tr>
-                        <td><strong>All Faculty</strong></td>
-                        <td><strong>${data.total}</strong></td>
-                        <td><strong>${totals.completed}</strong></td>
-                        <td><strong>${totals.scheduled}</strong></td>
-                        <td><strong>${totals.pending}</strong></td>
-                        <td><strong>${totals.cancelled}</strong></td>
-                        <td><strong>${totals.rejected}</strong></td>
-                    </tr>
-                `;
-            } else {
-                totalsRow.style.display = 'none';
             }
         }
 
         function onPeriodChange() {
             const isCustom = document.getElementById('periodFilter').value === 'custom';
             document.getElementById('customRange').style.display = isCustom ? 'flex' : 'none';
-            renderReports();
+            renderReport();
         }
 
         function exportReportCSV() {
             if (!currentReport || currentReport.rows.length === 0) {
-                alert('No consultations match the current filters, so there is nothing to export.');
+                alert('No consultations match the current period, so there is nothing to export.');
                 return;
             }
-            window.adminFunctions.downloadCSV('consultation-report.csv', window.adminFunctions.toCSV(currentReport));
-        }
-
-        function exportReportSummaryCSV() {
-            if (!currentReport) return;
-            const header = ['Faculty', 'Total', 'Completed', 'Scheduled', 'Pending', 'Cancelled', 'Rejected'];
-            const lines = [header.join(',')];
-            Object.entries(currentReport.facultyConsultations).forEach(([faculty, s]) => {
-                const cell = value => /[",]/.test(String(value)) ? '"' + String(value).replace(/"/g, '""') + '"' : value;
-                lines.push([faculty, s.total, s.completed, s.scheduled, s.pending, s.cancelled, s.rejected].map(cell).join(','));
-            });
-            window.adminFunctions.downloadCSV('consultation-summary.csv', lines.join('\n'));
+            window.facultyFunctions.downloadCSV('my-consultation-report.csv', window.facultyFunctions.toCSV(currentReport));
         }
 
         function printReport() {
@@ -289,12 +287,11 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            if (!window.requireRole || !window.requireRole('admin')) return;
+            if (!window.requireRole || !window.requireRole('faculty')) return;
 
-            renderReports();
-            document.getElementById('periodFilter').addEventListener('change', onPeriodChange);
-            document.getElementById('customFrom').addEventListener('change', renderReports);
-            document.getElementById('customTo').addEventListener('change', renderReports);
+            renderReport();
+            document.getElementById('customFrom').addEventListener('change', renderReport);
+            document.getElementById('customTo').addEventListener('change', renderReport);
         });
     </script>
 </body>

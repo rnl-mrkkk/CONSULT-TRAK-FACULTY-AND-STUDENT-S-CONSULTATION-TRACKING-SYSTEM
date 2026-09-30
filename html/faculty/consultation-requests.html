@@ -14,7 +14,7 @@
             <div class="navbar-user">
                 <div class="user-info">
                     <div class="role">Faculty Member</div>
-                    <div class="dept">Computer Science</div>
+                    <div class="dept">SOCS Faculty</div>
                 </div>
                 <button class="notification-bell" aria-label="Notifications">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
@@ -31,14 +31,14 @@
     <div class="dashboard-container">
         <aside class="sidebar">
             <a href="dashboard.html" class="sidebar-brand">
-                <span class="brand-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 4v16M3 10h18"/></svg></span>
+                <span class="brand-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 4v16M3 10h18"/></svg></span>
                 <h1 class="brand-name">CONSULT-TRAK</h1>
             </a>
             <div class="sidebar-user-card">
-                <div class="sidebar-user-avatar">FM</div>
+                <div class="sidebar-user-avatar" id="sidebarInitials">JO</div>
                 <div class="sidebar-user-info">
-                    <span class="sidebar-user-name">Faculty Member</span>
-                    <span class="sidebar-user-dept">Computer Science</span>
+                    <span class="sidebar-user-name" id="sidebarFacultyName">Mr. Jaafar Omar</span>
+                    <span class="sidebar-user-dept" id="sidebarFacultyDept">SOCS Faculty</span>
                 </div>
                 <svg class="sidebar-user-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
             </div>
@@ -47,7 +47,7 @@
                     <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11 12 3l9 8"/><path d="M5 10v11h14V10"/></svg></span>
                     <span class="nav-label">Dashboard</span>
                 </a>
-                <a href="consultation-requests.html" class="nav-item" data-page="consultation-requests">
+                <a href="consultation-requests.html" class="nav-item active" data-page="consultation-requests">
                     <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg></span>
                     <span class="nav-label">Consultation Requests</span>
                 </a>
@@ -63,6 +63,10 @@
                     <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v6h6"/><path d="M3.51 9a9 9 0 1 0 2.13-5.36"/><path d="M12 7v5l3 2"/></svg></span>
                     <span class="nav-label">History</span>
                 </a>
+                <a href="reports.html" class="nav-item" data-page="reports">
+                    <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 15l3-4 3 3 5-7"/></svg></span>
+                    <span class="nav-label">Reports</span>
+                </a>
             </nav>
             <div class="sidebar-footer">
                 <button class="logout-btn" id="logoutBtn">Logout</button>
@@ -72,32 +76,41 @@
         <main class="main-content">
             <div class="page-header">
                 <h2 class="page-title">Consultation Requests</h2>
-                <p class="page-subtitle">View, accept, or reject student consultation requests (FR-004)</p>
+                <p class="page-subtitle">Students who submitted a request to you. Open a request to view details, then accept, reject, or manage it.</p>
+            </div>
+
+            <div class="requests-toolbar">
+                <div class="search-filter-group">
+                    <input
+                        type="text"
+                        id="requestSearch"
+                        class="form-input request-search-input"
+                        placeholder="Search by student, ID, or topic..."
+                        oninput="onSearchChange()"
+                    >
+                </div>
+                <div class="stat-label" id="resultsCount">Loading requests...</div>
             </div>
 
             <div id="requestsList">
-                <!-- Filled by JS -->
+                <!-- Filled dynamically by renderRequests() -->
             </div>
         </main>
     </div>
 
-    <!-- Reject Modal -->
-    <div id="rejectModal" class="modal-overlay" hidden>
-        <div class="modal">
+    <!-- ========================================================
+         SINGLE DETAIL PANEL
+         All request actions live inside this one panel, so only
+         one dialog can ever be open at a time.
+         ======================================================== -->
+    <div id="requestDetailModal" class="modal-overlay" hidden>
+        <div class="modal" style="max-width: 620px;">
             <div class="modal-header">
-                <h3>Reject Request</h3>
-                <button class="modal-close" onclick="closeRejectModal()">&times;</button>
+                <h3 id="requestDetailTitle">Consultation Request</h3>
+                <button class="modal-close" onclick="closeDetail()" aria-label="Close request details">&times;</button>
             </div>
-            <div class="modal-body">
-                <input type="hidden" id="rejectRequestId">
-                <div class="form-group">
-                    <label class="form-label">Reason for Rejection</label>
-                    <textarea id="rejectReason" class="form-textarea" placeholder="Explain why this request is being rejected..."></textarea>
-                </div>
-                <div class="modal-actions">
-                    <button class="action-btn secondary" onclick="closeRejectModal()">Cancel</button>
-                    <button class="action-btn danger" onclick="confirmReject()">Reject Request</button>
-                </div>
+            <div class="modal-body" id="requestDetailBody">
+                <!-- Filled dynamically by renderDetail() -->
             </div>
         </div>
     </div>
@@ -105,90 +118,561 @@
     <script src="../../js/script.js"></script>
     <script src="../../js/faculty.js"></script>
     <script>
+        // ==================== State ====================
+        let searchQuery = '';
+        let activeRequestId = null;
+        let lastSignature = '';
+
+        const STATUS_LABEL = {
+            pending: 'Pending',
+            scheduled: 'Accepted',
+            rejected: 'Rejected',
+            completed: 'Completed',
+            cancelled: 'Cancelled'
+        };
+
+        // Pending is always first, then Accepted, Rejected, Completed, Cancelled.
+        const STATUS_ORDER = { pending: 0, scheduled: 1, rejected: 2, completed: 3, cancelled: 4 };
+
+        // ==================== Theme ====================
         function toggleTheme() {
             const root = document.documentElement;
             const isDark = root.getAttribute('data-theme') === 'dark';
             root.setAttribute('data-theme', isDark ? 'light' : 'dark');
-            document.getElementById('themeLabel').textContent = isDark ? 'Light' : 'Dark';
+            const label = document.getElementById('themeLabel');
+            if (label) label.textContent = isDark ? 'Light' : 'Dark';
             localStorage.setItem('theme', isDark ? 'light' : 'dark');
         }
 
-        // Load saved theme
-        document.addEventListener('DOMContentLoaded', function() {
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme) {
-                document.documentElement.setAttribute('data-theme', savedTheme);
-                document.getElementById('themeLabel').textContent = savedTheme === 'dark' ? 'Dark' : 'Light';
-            }
-        });
+        // ==================== Identity / scoping ====================
+        function currentFacultyName() {
+            // The signed-in account is the source of truth. getFacultyInfo() is a
+            // single static demo profile, so it must not override a real session.
+            const session = (typeof getCurrentUser === 'function') ? getCurrentUser() : null;
+            if (session && session.name) return session.name;
+            try {
+                const info = window.facultyFunctions.getFacultyInfo();
+                if (info && info.name) return info.name;
+            } catch (e) { /* no faculty profile either */ }
+            return '';
+        }
 
-        let requests = [];
+        /**
+         * Only requests addressed to the signed-in faculty member.
+         * Requests stored before faculty attribution existed have no
+         * `faculty` field; those stay visible rather than blanking the page.
+         */
+        function getMyRequests() {
+            const all = window.facultyFunctions.getAllRequests() || [];
+            const me = currentFacultyName();
+            if (!me) return all;
+            return all.filter(r => r && (!r.faculty || r.faculty === me));
+        }
 
+        function statusLabel(status) {
+            return STATUS_LABEL[status] || (status ? status.charAt(0).toUpperCase() + status.slice(1) : 'Unknown');
+        }
+
+        // ==================== List rendering ====================
         function renderRequests() {
             const list = document.getElementById('requestsList');
-            requests = window.facultyFunctions.getAllRequests();
+            const mine = getMyRequests();
 
-            if (requests.length === 0) {
-                list.innerHTML = `<div class="empty-state">
-                    <div class="empty-state-icon"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg></div>
-                    <div class="empty-state-title">No requests</div>
-                    <div class="empty-state-text">There are no consultation requests right now.</div>
-                </div>`;
+            lastSignature = signatureOf(mine);
+
+            let visible = mine;
+            if (searchQuery) {
+                visible = visible.filter(r =>
+                    (r.student || '').toLowerCase().includes(searchQuery) ||
+                    (r.studentId || '').toLowerCase().includes(searchQuery) ||
+                    (r.subject || '').toLowerCase().includes(searchQuery) ||
+                    (r.concern || '').toLowerCase().includes(searchQuery)
+                );
+            }
+
+            visible.sort((a, b) => {
+                const pa = STATUS_ORDER[a.status] === undefined ? 9 : STATUS_ORDER[a.status];
+                const pb = STATUS_ORDER[b.status] === undefined ? 9 : STATUS_ORDER[b.status];
+                if (pa !== pb) return pa - pb;
+                return (b.id || 0) - (a.id || 0);
+            });
+
+            const pendingCount = mine.filter(r => r.status === 'pending').length;
+            document.getElementById('resultsCount').textContent =
+                `${pendingCount} pending · showing ${visible.length} of ${mine.length} request(s)`;
+
+            if (visible.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 14.14 14.14"/></svg>
+                        </div>
+                        <div class="empty-state-title">No pending requests</div>
+                        <div class="empty-state-text">${searchQuery
+                            ? 'No requests match your search.'
+                            : 'You are all caught up! New requests from students will appear here automatically.'}</div>
+                    </div>
+                `;
                 return;
             }
 
-            list.innerHTML = requests.map(r => `
-                <div class="request-card">
+            list.innerHTML = visible.map(r => renderRequestCard(r)).join('');
+        }
+
+        function renderRequestCard(r) {
+            const when = (r.confirmedDate || r.preferredDate) + ' at ' + (r.confirmedTime || r.preferredTime);
+
+            return `
+                <div class="request-card ${escapeHtml(r.status)}" onclick="openDetail(${r.id})" role="button" tabindex="0"
+                     onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openDetail(${r.id});}">
+
                     <div class="request-header">
                         <div>
-                            <div class="request-student">${r.student} <span class="stat-label">(${r.studentId})</span></div>
-                            <div class="request-subject">${r.subject} · Sent ${r.submittedAt}</div>
+                            <div class="request-student">
+                                ${escapeHtml(r.student || 'Unknown student')}
+                                <span class="student-id-chip">${escapeHtml(r.studentId || 'No ID')}</span>
+                            </div>
+                            <div class="request-subject">
+                                <strong>${escapeHtml(r.subject || 'No topic')}</strong> · Requested: ${escapeHtml(when)}
+                            </div>
                         </div>
-                        <span class="status-badge ${r.status}">${r.status.charAt(0).toUpperCase() + r.status.slice(1)}</span>
+                        <span class="status-badge ${escapeHtml(r.status)}">${escapeHtml(statusLabel(r.status))}</span>
                     </div>
-                    <div class="request-concern">"${r.concern}"</div>
-                    <div class="request-meta">
-                        <span class="meta-icon">${window.ctIcon('calendar', 14)} ${r.preferredDate}</span>
-                        <span class="meta-icon">${window.ctIcon('clock', 14)} ${r.preferredTime}</span>
-                        <span class="meta-icon">${window.ctIcon('mail', 14)} ${r.email}</span>
-                    </div>
-                    ${r.status === 'rejected' && r.rejectionReason ? `<div class="request-meta"><span style="color: var(--color-error);">Rejected: ${r.rejectionReason}</span></div>` : ''}
-                    ${r.status === 'pending' ? `
+
+                    <div class="request-concern">"${escapeHtml(r.concern || 'No detailed concern specified.')}"</div>
+
                     <div class="request-actions">
-                        <button class="action-btn success" onclick="handleAccept(${r.id})"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Accept</button>
-                        <button class="action-btn danger" onclick="openRejectModal(${r.id})"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg> Reject</button>
-                    </div>` : ''}
+                        <button class="action-btn secondary sm" onclick="event.stopPropagation();openDetail(${r.id});">View</button>
+
+                        ${r.status === 'pending' ? `
+                            <button class="action-btn success sm" onclick="event.stopPropagation();openDetail(${r.id},'accept');">Accept</button>
+                            <button class="action-btn danger sm" onclick="event.stopPropagation();openDetail(${r.id},'reject');">Reject</button>
+                        ` : ''}
+
+                        ${r.status === 'scheduled' ? `
+                            <button class="action-btn secondary sm" onclick="event.stopPropagation();openDetail(${r.id},'manage');">Manage</button>
+                        ` : ''}
+                    </div>
                 </div>
-            `).join('');
+            `;
         }
 
-        function handleAccept(id) {
-            if (window.facultyFunctions.acceptRequest(id)) {
-                alert('Request accepted. The student will be notified.');
+        // ==================== Detail panel ====================
+        function openDetail(id, focus) {
+            activeRequestId = id;
+            renderDetail(focus);
+            const modal = document.getElementById('requestDetailModal');
+            modal.hidden = false;
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeDetail() {
+            document.getElementById('requestDetailModal').hidden = true;
+            document.body.style.overflow = '';
+            activeRequestId = null;
+        }
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && !document.getElementById('requestDetailModal').hidden) closeDetail();
+        });
+        document.addEventListener('click', function (e) {
+            if (e.target.classList && e.target.classList.contains('modal-overlay')) closeDetail();
+        });
+
+        function renderDetail(focus) {
+            const r = window.facultyFunctions.getRequestById(activeRequestId);
+            const body = document.getElementById('requestDetailBody');
+            if (!r) { closeDetail(); return; }
+
+            document.getElementById('requestDetailTitle').textContent = r.student || 'Consultation Request';
+
+            body.innerHTML = `
+                <div id="panelAlert" class="alert alert-error" style="display:none;margin-bottom:var(--space-md);" role="alert"></div>
+
+                <div class="detail-identity">
+                    <div>
+                        <h4 class="detail-identity-name">${escapeHtml(r.student || 'Unknown student')}</h4>
+                        <div class="detail-identity-meta">
+                            <span class="student-id-chip">${escapeHtml(r.studentId || 'No student ID')}</span>
+                            ${(r.program || r.department) ? `<span>${escapeHtml(r.program || r.department)}</span>` : ''}
+                            ${r.email ? `<span>${escapeHtml(r.email)}</span>` : ''}
+                        </div>
+                    </div>
+                    <span class="status-badge ${escapeHtml(r.status)}">${escapeHtml(statusLabel(r.status))}</span>
+                </div>
+
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <span class="detail-label">Topic</span>
+                        <span class="detail-value">${escapeHtml(r.subject || '—')}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Date Submitted</span>
+                        <span class="detail-value">${escapeHtml(r.submittedAt || '—')}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Preferred Schedule</span>
+                        <span class="detail-value">${escapeHtml(r.preferredDate || '—')} ${escapeHtml(r.preferredTime || '')}</span>
+                    </div>
+                    ${(r.status === 'scheduled' || r.status === 'completed' || r.status === 'cancelled') ? `
+                        <div class="detail-item">
+                            <span class="detail-label">Confirmed Schedule</span>
+                            <span class="detail-value">${escapeHtml(r.confirmedDate || '—')} ${escapeHtml(r.confirmedTime || '')}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Venue / Meeting Link</span>
+                            <span class="detail-value">${escapeHtml(r.venue || '—')}</span>
+                        </div>
+                    ` : ''}
+                </div>
+
+                <div class="detail-box">
+                    <div class="detail-box-title">Student Concern</div>
+                    <div class="detail-box-content">"${escapeHtml(r.concern || 'No specific concern provided.')}"</div>
+                </div>
+
+                ${r.instructions ? `
+                    <div class="detail-box">
+                        <div class="detail-box-title">Your Instructions to the Student</div>
+                        <div class="detail-box-content">${escapeHtml(r.instructions)}</div>
+                    </div>
+                ` : ''}
+
+                ${r.status === 'rejected' ? `
+                    <div class="detail-box" style="border-left:3px solid var(--color-error);">
+                        <div class="detail-box-title" style="color:var(--color-error);">Rejection Reason</div>
+                        <div class="detail-box-content">
+                            ${escapeHtml(r.rejectionReason || 'No reason provided')}
+                            ${r.rejectedAt ? `<div class="detail-box-sub">Rejected on ${escapeHtml(r.rejectedAt)}</div>` : ''}
+                        </div>
+                    </div>
+                ` : ''}
+
+                ${r.status === 'cancelled' ? `
+                    <div class="detail-box" style="border-left:3px solid var(--color-text-tertiary);">
+                        <div class="detail-box-title">Cancellation Reason</div>
+                        <div class="detail-box-content">
+                            ${escapeHtml(r.cancellationReason || 'Cancelled')}
+                            ${r.cancelledAt ? `<div class="detail-box-sub">Cancelled on ${escapeHtml(r.cancelledAt)}</div>` : ''}
+                        </div>
+                    </div>
+                ` : ''}
+
+                ${r.status === 'completed' ? `
+                    <div class="detail-box" style="border-left:3px solid var(--color-success);">
+                        <div class="detail-box-title" style="color:var(--color-success);">Consultation Outcome</div>
+                        <div class="detail-box-content">
+                            ${escapeHtml(r.outcomeNotes || 'Consultation completed.')}
+                            ${r.completedAt ? `<div class="detail-box-sub">Completed on ${escapeHtml(r.completedAt)}</div>` : ''}
+                        </div>
+                    </div>
+                ` : ''}
+
+                ${r.status === 'pending' ? renderAcceptAndReject(r) : ''}
+                ${r.status === 'scheduled' ? renderManage(r) : ''}
+
+                <div class="modal-actions" style="margin-top:var(--space-md);padding-top:var(--space-sm);border-top:1px solid var(--color-border-light);">
+                    <button class="action-btn secondary" onclick="closeDetail()">Close</button>
+                </div>
+            `;
+
+            if (r.status === 'pending') {
+                showDecision(focus === 'reject' ? 'reject' : 'accept');
+            }
+
+            if (focus) {
+                const target = body.querySelector(`[data-section="${focus}"]`);
+                if (target && typeof target.scrollIntoView === 'function') {
+                    target.scrollIntoView({ block: 'nearest' });
+                }
+            }
+        }
+
+        /**
+         * Show either the Accept or the Reject form, never both. Two full forms
+         * with their own buttons in one panel was cluttered and made it easy to
+         * press the wrong action.
+         */
+        function showDecision(which) {
+            const accept = document.getElementById('panelAccept');
+            const reject = document.getElementById('panelReject');
+            if (!accept || !reject) return;
+            const showAccept = which !== 'reject';
+            accept.hidden = !showAccept;
+            reject.hidden = showAccept;
+            const tabAccept = document.getElementById('tabAccept');
+            const tabReject = document.getElementById('tabReject');
+            if (tabAccept) tabAccept.classList.toggle('is-active', showAccept);
+            if (tabReject) tabReject.classList.toggle('is-active', !showAccept);
+        }
+
+        function renderAcceptAndReject(r) {
+            return `
+                <div class="decision-switch" role="tablist" aria-label="Choose an action for this request">
+                    <button type="button" class="decision-switch-btn is-active" id="tabAccept" onclick="showDecision('accept')">Accept</button>
+                    <button type="button" class="decision-switch-btn" id="tabReject" onclick="showDecision('reject')">Reject</button>
+                </div>
+
+                <div class="panel-section" data-section="accept" id="panelAccept">
+                    <h4 class="panel-section-title">Accept this request</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="acceptDate">Confirmed Date</label>
+                            <input type="date" id="acceptDate" class="form-input" value="${escapeHtml(r.preferredDate || '')}">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="acceptTime">Confirmed Time</label>
+                            <input type="text" id="acceptTime" class="form-input" value="${escapeHtml(r.preferredTime || '')}" placeholder="e.g. 10:00 AM">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="acceptVenue">Venue / Meeting Link</label>
+                        <input type="text" id="acceptVenue" class="form-input" value="${escapeHtml(r.venue || 'Room 302, Engineering Building')}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="acceptInstructions">Instructions for the Student (Optional)</label>
+                        <textarea id="acceptInstructions" class="form-textarea" placeholder="e.g., Please bring your draft proposal and laptop."></textarea>
+                    </div>
+                    <div class="panel-section-actions">
+                        <button class="action-btn success" onclick="submitAccept()">Confirm &amp; Accept</button>
+                    </div>
+                </div>
+
+                <div class="panel-section" data-section="reject" id="panelReject" hidden>
+                    <h4 class="panel-section-title">Reject this request</h4>
+                    <div class="form-group">
+                        <label class="form-label">Quick reasons</label>
+                        <div class="reason-chips">
+                            <button type="button" class="reason-chip" onclick="setRejectReason('Schedule conflict with a departmental lecture or meeting.')">Schedule Conflict</button>
+                            <button type="button" class="reason-chip" onclick="setRejectReason('Requested time slot is outside regular consultation hours.')">Outside Consultation Hours</button>
+                            <button type="button" class="reason-chip" onclick="setRejectReason('This topic is outside my course scope; referred to the Program Chair.')">Refer to Program Chair</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="rejectReason">Reason (required)</label>
+                        <textarea id="rejectReason" class="form-textarea" placeholder="Explain why this request is being rejected..."></textarea>
+                    </div>
+                    <div class="panel-section-actions">
+                        <button class="action-btn danger" onclick="submitReject()">Confirm Rejection</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderManage(r) {
+            return `
+                <div class="panel-section" data-section="manage" id="panelManage">
+                    <h4 class="panel-section-title">Manage this consultation</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="rescheduleDate">New Date</label>
+                            <input type="date" id="rescheduleDate" class="form-input" value="${escapeHtml(r.confirmedDate || r.preferredDate || '')}">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="rescheduleTime">New Time</label>
+                            <input type="text" id="rescheduleTime" class="form-input" value="${escapeHtml(r.confirmedTime || r.preferredTime || '')}" placeholder="e.g. 2:00 PM">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="rescheduleVenue">Venue / Meeting Link</label>
+                        <input type="text" id="rescheduleVenue" class="form-input" value="${escapeHtml(r.venue || 'Room 302, Engineering Building')}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="rescheduleReason">Reason / Notes (Optional)</label>
+                        <input type="text" id="rescheduleReason" class="form-input" placeholder="Explain the schedule adjustment">
+                    </div>
+                    <div class="panel-section-actions">
+                        <button class="action-btn secondary" onclick="submitReschedule()">Save New Schedule</button>
+                    </div>
+                </div>
+
+                <div class="panel-section" data-section="complete" id="panelComplete">
+                    <h4 class="panel-section-title">Mark as completed</h4>
+                    <div class="form-group">
+                        <label class="form-label" for="completeNotes">Consultation notes / outcome</label>
+                        <textarea id="completeNotes" class="form-textarea" placeholder="Summary of the discussion and guidance given."></textarea>
+                    </div>
+                    <div class="panel-section-actions">
+                        <button class="action-btn success" onclick="submitComplete()">Mark as Completed</button>
+                    </div>
+                </div>
+
+                <div class="panel-section" data-section="cancel" id="panelCancel">
+                    <h4 class="panel-section-title">Cancel this consultation</h4>
+                    <div class="form-group">
+                        <label class="form-label" for="cancelReasonField">Reason (required)</label>
+                        <textarea id="cancelReasonField" class="form-textarea" placeholder="Explain why the consultation is being cancelled..."></textarea>
+                    </div>
+                    <div class="panel-section-actions">
+                        <button class="action-btn danger" onclick="submitCancel()">Cancel Consultation</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ==================== Panel helpers ====================
+        function setPanelAlert(message) {
+            const box = document.getElementById('panelAlert');
+            if (!box) return;
+            box.textContent = message;
+            box.style.display = message ? 'block' : 'none';
+        }
+
+        function fieldValue(id) {
+            const el = document.getElementById(id);
+            return el ? el.value.trim() : '';
+        }
+
+        function afterAction(message, type) {
+            closeDetail();
+            renderRequests();
+            showToast(message, type);
+        }
+
+        // ==================== Actions ====================
+        function submitAccept() {
+            setPanelAlert('');
+            const date = fieldValue('acceptDate');
+            const time = fieldValue('acceptTime');
+            if (!date) { setPanelAlert('Please choose a confirmed date.'); return; }
+            if (!time) { setPanelAlert('Please enter a confirmed time.'); return; }
+
+            const result = window.facultyFunctions.acceptRequest(activeRequestId, {
+                confirmedDate: date,
+                confirmedTime: time,
+                venue: fieldValue('acceptVenue'),
+                instructions: fieldValue('acceptInstructions')
+            });
+
+            if (result && result.conflict) { setPanelAlert(result.conflict.message); return; }
+            if (result === true) { afterAction('Request accepted and scheduled.', 'success'); return; }
+            setPanelAlert('This request is no longer pending. The list has been refreshed.');
+            renderRequests();
+        }
+
+        function setRejectReason(text) {
+            const el = document.getElementById('rejectReason');
+            if (el) { el.value = text; el.focus(); }
+        }
+
+        function submitReject() {
+            setPanelAlert('');
+            const reason = fieldValue('rejectReason');
+            if (!reason) { setPanelAlert('Please state a reason for rejecting this request.'); return; }
+
+            if (window.facultyFunctions.rejectRequest(activeRequestId, reason)) {
+                afterAction('Request rejected. The student can see the reason.', 'danger');
+            } else {
+                setPanelAlert('This request is no longer pending. The list has been refreshed.');
                 renderRequests();
             }
         }
 
-        function openRejectModal(id) {
-            document.getElementById('rejectRequestId').value = id;
-            document.getElementById('rejectReason').value = '';
-            document.getElementById('rejectModal').hidden = false;
+        function submitReschedule() {
+            setPanelAlert('');
+            const date = fieldValue('rescheduleDate');
+            const time = fieldValue('rescheduleTime');
+            if (!date) { setPanelAlert('Please choose a new date.'); return; }
+            if (!time) { setPanelAlert('Please enter a new time.'); return; }
+
+            const result = window.facultyFunctions.rescheduleRequest(activeRequestId, {
+                newDate: date,
+                newTime: time,
+                venue: fieldValue('rescheduleVenue'),
+                reason: fieldValue('rescheduleReason')
+            });
+
+            if (result && result.conflict) { setPanelAlert(result.conflict.message); return; }
+            if (result === true) { afterAction('Consultation rescheduled.', 'success'); return; }
+            setPanelAlert('This request is no longer accepted, so it cannot be rescheduled.');
+            renderRequests();
         }
 
-        function closeRejectModal() {
-            document.getElementById('rejectModal').hidden = true;
-        }
-
-        function confirmReject() {
-            const id = parseInt(document.getElementById('rejectRequestId').value);
-            const reason = document.getElementById('rejectReason').value.trim() || 'No reason provided';
-            if (window.facultyFunctions.rejectRequest(id, reason)) {
-                closeRejectModal();
+        function submitComplete() {
+            setPanelAlert('');
+            if (window.facultyFunctions.completeRequest(activeRequestId, { concerns: fieldValue('completeNotes') })) {
+                afterAction('Consultation marked as completed.', 'success');
+            } else {
+                setPanelAlert('This request is no longer accepted, so it cannot be completed.');
                 renderRequests();
             }
         }
 
-        document.addEventListener('DOMContentLoaded', renderRequests);
+        function submitCancel() {
+            setPanelAlert('');
+            const reason = fieldValue('cancelReasonField');
+            if (!reason) { setPanelAlert('Please state a reason for cancelling.'); return; }
+
+            if (window.facultyFunctions.cancelRequest(activeRequestId, reason)) {
+                afterAction('Consultation cancelled.', 'warning');
+            } else {
+                setPanelAlert('This request is no longer accepted, so it cannot be cancelled.');
+                renderRequests();
+            }
+        }
+
+        // ==================== Search ====================
+        function onSearchChange() {
+            searchQuery = document.getElementById('requestSearch').value.trim().toLowerCase();
+            renderRequests();
+        }
+
+        // ==================== Toasts ====================
+        function showToast(message, type = 'success') {
+            const existing = document.querySelector('.toast-notice');
+            if (existing) existing.remove();
+
+            const toast = document.createElement('div');
+            toast.className = `toast-notice ${type}`;
+            const span = document.createElement('span');
+            span.textContent = message;
+            toast.appendChild(span);
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3500);
+        }
+
+        // ==================== Live updates ====================
+        function signatureOf(list) {
+            return JSON.stringify(list.map(r => [r.id, r.status, r.student, r.subject]));
+        }
+
+        function refreshIfChanged() {
+            if (signatureOf(getMyRequests()) !== lastSignature) renderRequests();
+        }
+
+        function applyIdentity() {
+            const me = currentFacultyName();
+            const nameEl = document.getElementById('sidebarFacultyName');
+            const deptEl = document.getElementById('sidebarFacultyDept');
+            const initialsEl = document.getElementById('sidebarInitials');
+            if (nameEl && me) nameEl.textContent = me;
+            if (deptEl) {
+                try {
+                    const info = window.facultyFunctions.getFacultyInfo();
+                    if (info && info.department) deptEl.textContent = info.department;
+                } catch (e) { /* keep default */ }
+            }
+            if (initialsEl && me) {
+                initialsEl.textContent = me.split(/\s+/).filter(Boolean).slice(-2)
+                    .map(p => p[0]).join('').toUpperCase();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+                const label = document.getElementById('themeLabel');
+                if (label) label.textContent = savedTheme === 'dark' ? 'Dark' : 'Light';
+            }
+            applyIdentity();
+            renderRequests();
+
+            // Pick up requests submitted by students without a manual reload.
+            setInterval(refreshIfChanged, 2500);
+            window.addEventListener('storage', refreshIfChanged);
+            window.addEventListener('focus', refreshIfChanged);
+        });
     </script>
 </body>
 </html>

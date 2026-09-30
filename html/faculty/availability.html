@@ -63,6 +63,11 @@
                     <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v6h6"/><path d="M3.51 9a9 9 0 1 0 2.13-5.36"/><path d="M12 7v5l3 2"/></svg></span>
                     <span class="nav-label">History</span>
                 </a>
+
+                <a href="reports.html" class="nav-item" data-page="reports">
+                    <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 15l3-4 3 3 5-7"/></svg></span>
+                    <span class="nav-label">Reports</span>
+                </a>
             </nav>
             <div class="sidebar-footer">
                 <button class="logout-btn" id="logoutBtn">Logout</button>
@@ -75,9 +80,12 @@
                 <p class="page-subtitle">Set and manage your consultation time slots (FR-007)</p>
             </div>
 
+            <!-- Validation feedback (FR6/FR7) -->
+            <div id="slotError" class="alert alert-error" style="display: none; margin-bottom: var(--space-lg);" role="alert"></div>
+
             <div class="content-card" style="margin-bottom: var(--space-xl);">
                 <div class="card-header">
-                    <h3 class="card-title">Add New Availability Slot</h3>
+                    <h3 class="card-title" id="slotFormTitle">Add New Availability Slot</h3>
                 </div>
                 <div class="card-body">
                     <div class="form-row">
@@ -101,10 +109,14 @@
                         </div>
                         <div class="form-group">
                             <label class="form-label">Max Students</label>
-                            <input type="number" id="newSlotMax" class="form-input" value="5" min="1">
+                            <input type="number" id="newSlotMax" class="form-input" value="5" min="1" max="20">
                         </div>
                     </div>
-                    <button class="action-btn primary" onclick="addSlot()">+ Add Slot</button>
+                    <input type="hidden" id="editingSlotId">
+                    <div style="display: flex; gap: var(--space-sm);">
+                        <button class="action-btn primary" id="slotSubmitBtn" onclick="addSlot()">+ Add Slot</button>
+                        <button class="action-btn secondary" id="slotCancelBtn" type="button" style="display: none;" onclick="cancelEditSlot()">Cancel Edit</button>
+                    </div>
                 </div>
             </div>
 
@@ -142,8 +154,19 @@
             return `${hour}:${m.toString().padStart(2, '0')} ${period}`;
         }
 
+        /**
+         * Convert "9:00 AM" back to "09:00" for <input type="time"> (FR7 edit).
+         */
+        function to24Hour(t) {
+            const minutes = window.facultyFunctions.timeToMinutes(t);
+            if (minutes === null || minutes === undefined) return '';
+            const hours = Math.floor(minutes / 60);
+            return String(hours).padStart(2, '0') + ':' + String(minutes % 60).padStart(2, '0');
+        }
+
         function renderAvailability() {
-            const slots = window.facultyFunctions.getAvailability();
+            // Only this member's own schedule is manageable (FR7)
+    const slots = window.facultyFunctions.getMyAvailability();
             const grid = document.getElementById('availabilityGrid');
 
             if (slots.length === 0) {
@@ -155,12 +178,14 @@
                 <div class="availability-card ${s.available ? '' : 'disabled'}">
                     <div class="availability-header">
                         <div>
-                            <div class="availability-day">${s.day}</div>
-                            <div class="availability-time">${s.startTime} — ${s.endTime}</div>
+                            <div class="availability-day">${escapeHtml(s.day)}</div>
+                            <div class="availability-time">${escapeHtml(s.startTime)} — ${escapeHtml(s.endTime)}</div>
+                            <div class="availability-detail">Up to ${escapeHtml(s.maxStudents)} student(s)</div>
                         </div>
                         <span class="status-badge ${s.available ? 'available' : 'inactive'}">${s.available ? 'Active' : 'Disabled'}</span>
                     </div>
                     <div class="availability-toggle">
+                        <button class="action-btn secondary sm" onclick="editSlot(${s.id})">Edit</button>
                         <button class="action-btn ${s.available ? 'secondary' : 'success'} sm" onclick="toggleSlot(${s.id})">${s.available ? 'Disable' : 'Enable'}</button>
                         <button class="action-btn danger sm" onclick="removeSlot(${s.id})">Remove</button>
                     </div>
@@ -168,24 +193,57 @@
             `).join('');
         }
 
+        function showSlotError(message) {
+            const box = document.getElementById('slotError');
+            box.textContent = message;
+            box.style.display = 'block';
+        }
+
+        function clearSlotError() {
+            const box = document.getElementById('slotError');
+            box.textContent = '';
+            box.style.display = 'none';
+        }
+
         function addSlot() {
+            clearSlotError();
             const day = document.getElementById('newSlotDay').value;
             const start = document.getElementById('newSlotStart').value;
             const end = document.getElementById('newSlotEnd').value;
-            const max = parseInt(document.getElementById('newSlotMax').value) || 5;
+            const max = parseInt(document.getElementById('newSlotMax').value, 10);
+            const editingId = document.getElementById('editingSlotId').value;
 
             if (!start || !end) {
-                alert('Please set both start and end times.');
+                showSlotError('Please set both start and end times.');
                 return;
             }
 
-            const newId = window.facultyFunctions.addAvailabilitySlot({
+            const slot = {
                 day,
                 startTime: formatTime(start),
                 endTime: formatTime(end),
-                maxStudents: max,
+                maxStudents: isNaN(max) ? 5 : max,
                 available: true
-            });
+            };
+
+            if (editingId) {
+                const result = window.facultyFunctions.updateAvailability(parseInt(editingId, 10), slot);
+                if (result && result.ok === false) {
+                    showSlotError(result.message);
+                    return;
+                }
+                cancelEditSlot();
+                renderAvailability();
+                return;
+            }
+
+            const newId = window.facultyFunctions.addAvailabilitySlot(slot);
+
+            // FR7: addAvailabilitySlot returns { error } when validation fails
+            if (newId && newId.error) {
+                showSlotError(newId.error);
+                return;
+            }
 
             if (newId) {
                 document.getElementById('newSlotStart').value = '';
@@ -194,17 +252,53 @@
             }
         }
 
+        /**
+         * Load a slot into the form so its day, time, and capacity can be changed (FR7).
+         */
+        function editSlot(id) {
+            clearSlotError();
+            const slot = window.facultyFunctions.getMyAvailability().find(s => s.id === id);
+            if (!slot) return;
+
+            document.getElementById('editingSlotId').value = slot.id;
+            document.getElementById('newSlotDay').value = slot.day;
+            document.getElementById('newSlotStart').value = to24Hour(slot.startTime);
+            document.getElementById('newSlotEnd').value = to24Hour(slot.endTime);
+            document.getElementById('newSlotMax').value = slot.maxStudents;
+            document.getElementById('slotFormTitle').textContent = 'Edit Availability Slot';
+            document.getElementById('slotSubmitBtn').textContent = 'Save Changes';
+            document.getElementById('slotCancelBtn').style.display = 'inline-flex';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function cancelEditSlot() {
+            document.getElementById('editingSlotId').value = '';
+            document.getElementById('newSlotStart').value = '';
+            document.getElementById('newSlotEnd').value = '';
+            document.getElementById('newSlotMax').value = 5;
+            document.getElementById('slotFormTitle').textContent = 'Add New Availability Slot';
+            document.getElementById('slotSubmitBtn').textContent = '+ Add Slot';
+            document.getElementById('slotCancelBtn').style.display = 'none';
+        }
+
         function toggleSlot(id) {
-            const slot = window.facultyFunctions.getAvailability().find(s => s.id === id);
+            const slot = window.facultyFunctions.getMyAvailability().find(s => s.id === id);
             if (slot) {
-                window.facultyFunctions.updateAvailability(id, { available: !slot.available });
+                const result = window.facultyFunctions.updateAvailability(id, { available: !slot.available });
+                if (result && result.ok === false) {
+                    showSlotError(result.message);
+                    return;
+                }
                 renderAvailability();
             }
         }
 
         function removeSlot(id) {
-            if (confirm('Remove this availability slot?')) {
+            if (confirm('Remove this availability slot? Students will no longer be able to book it.')) {
                 window.facultyFunctions.removeAvailabilitySlot(id);
+                if (String(document.getElementById('editingSlotId').value) === String(id)) {
+                    cancelEditSlot();
+                }
                 renderAvailability();
             }
         }

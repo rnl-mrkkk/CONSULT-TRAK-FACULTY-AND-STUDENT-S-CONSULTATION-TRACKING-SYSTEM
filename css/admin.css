@@ -99,16 +99,3 @@
     display: flex;
     gap: var(--space-xs);
 }
-
-/* Filter controls */
-.filter-bar {
-    display: flex;
-    gap: var(--space-md);
-    margin-bottom: var(--space-lg);
-    flex-wrap: wrap;
-}
-
-.filter-bar .form-input,
-.filter-bar .form-select {
-    max-width: 260px;
-}

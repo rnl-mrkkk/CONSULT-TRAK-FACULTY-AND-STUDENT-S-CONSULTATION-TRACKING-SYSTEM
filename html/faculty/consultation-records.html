@@ -63,6 +63,11 @@
                     <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v6h6"/><path d="M3.51 9a9 9 0 1 0 2.13-5.36"/><path d="M12 7v5l3 2"/></svg></span>
                     <span class="nav-label">History</span>
                 </a>
+
+                <a href="reports.html" class="nav-item" data-page="reports">
+                    <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 15l3-4 3 3 5-7"/></svg></span>
+                    <span class="nav-label">Reports</span>
+                </a>
             </nav>
         </aside>
 
@@ -157,10 +162,10 @@
             const recent = records.slice(0, 4);
             document.getElementById('recentRecordsBody').innerHTML = recent.length ? recent.map(r => `
                 <tr>
-                    <td>${r.student}</td>
-                    <td>${r.subject}</td>
-                    <td>${r.date}</td>
-                    <td><span class="status-badge ${r.status}">${r.status.charAt(0).toUpperCase() + r.status.slice(1)}</span></td>
+                    <td>${escapeHtml(r.student)}</td>
+                    <td>${escapeHtml(r.subject)}</td>
+                    <td>${escapeHtml(r.date)}</td>
+                    <td><span class="status-badge ${escapeHtml(r.status)}">${escapeHtml(r.status.charAt(0).toUpperCase() + r.status.slice(1))}</span></td>
                 </tr>
             `).join('') : `<tr><td colspan="4" style="text-align:center; color: var(--color-text-tertiary);">No records yet.</td></tr>`;
         }

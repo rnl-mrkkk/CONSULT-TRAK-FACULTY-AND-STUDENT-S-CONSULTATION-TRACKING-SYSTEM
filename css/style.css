@@ -571,6 +571,7 @@ img, svg { display: block; max-width: 100%; }
 .navbar-user { display: flex; align-items: center; gap: var(--space-lg); position: relative; }
 
 .user-info {
+  display: none;
   text-align: right;
   padding: var(--space-xs) var(--space-md);
   border-radius: var(--radius-sm);
@@ -1096,10 +1097,11 @@ img, svg { display: block; max-width: 100%; }
   font-weight: 600;
   white-space: nowrap;
 }
-.status-badge.scheduled,
 .status-badge.active,
 .status-badge.available,
 .status-badge.completed { background: rgba(45, 122, 62, 0.12); color: var(--color-success); }
+.status-badge.scheduled,
+.status-badge.accepted { background: rgba(37, 99, 235, 0.12); color: var(--color-info); }
 .status-badge.pending,
 .status-badge.open { background: rgba(178, 106, 4, 0.14); color: var(--color-warning); }
 .status-badge.cancelled,
@@ -1172,6 +1174,11 @@ img, svg { display: block; max-width: 100%; }
 .form-row > div { flex: 1; }
 
 /* --- Modal --- */
+/* A class rule such as `.modal-overlay { display: flex }` outranks the UA
+   stylesheet's `[hidden] { display: none }`, so the hidden attribute silently
+   stops working and every overlay stacks on top of the others. Keep [hidden]
+   authoritative so overlays can be toggled reliably. */
+[hidden] { display: none !important; }
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -1306,7 +1313,74 @@ img, svg { display: block; max-width: 100%; }
 }
 
 /* ============================================================
-   8. REDUCED MOTION
+   8. VALIDATION FEEDBACK
+   ============================================================ */
+.alert {
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  line-height: 1.5;
+  border: 1px solid transparent;
+}
+
+.alert-error {
+  background: var(--color-error-light, #fef2f2);
+  border-color: var(--color-error, #dc2626);
+  color: var(--color-error, #dc2626);
+}
+
+.form-hint {
+  margin: var(--space-xs) 0 0;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+}
+
+.filter-label {
+  background: var(--color-surface-hover);
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.slot-picker {
+  border: 1px solid var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-light, rgba(37, 99, 235, 0.12));
+}
+
+/* Filter controls - shared by every role, so this lives here rather than
+   in admin.css (student pages never load that file) */
+.filter-bar {
+  display: flex;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.filter-bar .form-input,
+.filter-bar .form-select {
+  max-width: 260px;
+}
+
+/* Stack the filter controls on narrow screens instead of overflowing */
+@media (max-width: 640px) {
+  .filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-bar .form-input,
+  .filter-bar .form-select {
+    max-width: 100%;
+  }
+}
+
+/* ============================================================
+   9. REDUCED MOTION
    ============================================================ */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

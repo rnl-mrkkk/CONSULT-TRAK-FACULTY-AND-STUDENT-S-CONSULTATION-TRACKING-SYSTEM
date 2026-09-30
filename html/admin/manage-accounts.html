@@ -72,12 +72,15 @@
             </div>
 
             <!-- Filter Bar -->
+            <div id="accountError" class="alert alert-error" style="display: none; margin-bottom: var(--space-lg);" role="alert"></div>
+
             <div class="filter-bar">
                 <input type="text" id="searchInput" class="form-input" placeholder="Search by name or email...">
                 <select id="roleFilter" class="form-select">
                     <option value="all">All Roles</option>
                     <option value="student">Student</option>
                     <option value="faculty">Faculty</option>
+                    <option value="admin">Admin</option>
                 </select>
                 <select id="statusFilter" class="form-select">
                     <option value="all">All Status</option>
@@ -179,17 +182,33 @@
             const list = filtered || accounts;
             document.getElementById('accountCount').textContent = list.length + ' account(s)';
 
+            if (list.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">${window.ctIcon('user', 40)}</div>
+                                <div class="empty-state-title">No accounts found</div>
+                                <div class="empty-state-text">Try changing the filters, or add a new account.</div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
             tbody.innerHTML = list.map(a => `
                 <tr>
-                    <td>${a.name}</td>
-                    <td>${a.email}</td>
-                    <td><span class="status-badge ${a.role}">${a.role.charAt(0).toUpperCase() + a.role.slice(1)}</span></td>
-                    <td>${a.department}</td>
-                    <td><span class="status-badge ${a.status === 'active' ? 'active' : 'inactive'}">${a.status.charAt(0).toUpperCase() + a.status.slice(1)}</span></td>
+                    <td>${escapeHtml(a.name)}${a.studentId ? `<div class="availability-detail">${escapeHtml(a.studentId)}</div>` : ''}</td>
+                    <td>${escapeHtml(a.email)}</td>
+                    <td><span class="status-badge ${escapeHtml(a.role)}">${escapeHtml(a.role.charAt(0).toUpperCase() + a.role.slice(1))}</span></td>
+                    <td>${escapeHtml(a.department)}</td>
+                    <td><span class="status-badge ${a.status === 'active' ? 'active' : 'inactive'}">${escapeHtml(a.status.charAt(0).toUpperCase() + a.status.slice(1))}</span></td>
                     <td>
                         <div class="admin-table-actions">
                             <button class="action-btn secondary sm" onclick="editAccount(${a.id})">Edit</button>
                             <button class="action-btn ${a.status === 'active' ? 'danger' : 'success'} sm" onclick="toggleStatus(${a.id})">${a.status === 'active' ? 'Deactivate' : 'Activate'}</button>
+                            <button class="action-btn danger sm" onclick="deleteAccount(${a.id})">Delete</button>
                         </div>
                     </td>
                 </tr>
@@ -235,7 +254,20 @@
             document.getElementById('accountModal').hidden = true;
         }
 
+        function showAccountError(message) {
+            const box = document.getElementById('accountError');
+            box.textContent = message;
+            box.style.display = 'block';
+        }
+
+        function clearAccountError() {
+            const box = document.getElementById('accountError');
+            box.textContent = '';
+            box.style.display = 'none';
+        }
+
         function saveAccount() {
+            clearAccountError();
             const id = document.getElementById('editAccountId').value;
             const name = document.getElementById('accountName').value.trim();
             const email = document.getElementById('accountEmail').value.trim();
@@ -243,36 +275,64 @@
             const department = document.getElementById('accountDepartment').value.trim();
 
             if (!name || !email || !department) {
-                alert('Please fill in all fields.');
+                showAccountError('Please fill in all fields.');
                 return;
             }
 
             if (id) {
-                const account = accounts.find(a => a.id === parseInt(id));
-                if (account) {
-                    account.name = name;
-                    account.email = email;
-                    account.role = role;
-                    account.department = department;
+                const result = window.adminFunctions.updateAccount(parseInt(id, 10), { name, email, role, department });
+                if (result && result.error) {
+                    showAccountError(result.error);
+                    return;
                 }
             } else {
-                const newId = Math.max(...accounts.map(a => a.id)) + 1;
-                accounts.push({ id: newId, name, email, role, department, status: 'active', createdAt: new Date().toISOString().split('T')[0] });
+                const newId = window.adminFunctions.addAccount({ name, email, role, department });
+                if (newId && newId.error) {
+                    showAccountError(newId.error);
+                    return;
+                }
             }
 
+            // Re-read from the store so the table reflects what was persisted
+            accounts = window.adminFunctions.getAccountData();
             closeAddModal();
             applyFilters();
         }
 
         function toggleStatus(id) {
+            clearAccountError();
+            const account = window.adminFunctions.toggleAccountStatus(id);
+            if (!account) {
+                showAccountError('Account not found.');
+                return;
+            }
+            accounts = window.adminFunctions.getAccountData();
+            applyFilters();
+        }
+
+        function deleteAccount(id) {
+            clearAccountError();
             const account = accounts.find(a => a.id === id);
-            if (!account) return;
-            account.status = account.status === 'active' ? 'inactive' : 'active';
+            if (!account) {
+                showAccountError('Account not found.');
+                return;
+            }
+            if (!confirm(`Delete ${account.name} (${account.email})? This cannot be undone.`)) {
+                return;
+            }
+            const result = window.adminFunctions.deleteAccount(id);
+            if (result && result.error) {
+                showAccountError(result.error);
+                return;
+            }
+            accounts = window.adminFunctions.getAccountData();
             applyFilters();
         }
 
         // Initialize
-        window.addEventListener('load', () => {
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!window.requireRole || !window.requireRole('admin')) return;
+
             accounts = window.adminFunctions.getAccountData();
             renderAccounts();
             document.getElementById('searchInput').addEventListener('input', applyFilters);

@@ -63,6 +63,11 @@
                     <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v6h6"/><path d="M3.51 9a9 9 0 1 0 2.13-5.36"/><path d="M12 7v5l3 2"/></svg></span>
                     <span class="nav-label">History</span>
                 </a>
+
+                <a href="reports.html" class="nav-item" data-page="reports">
+                    <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 15l3-4 3 3 5-7"/></svg></span>
+                    <span class="nav-label">Reports</span>
+                </a>
             </nav>
         </aside>
 
@@ -73,6 +78,7 @@
             </div>
 
             <div class="filter-bar">
+                <input type="text" id="searchInput" class="form-input" placeholder="Search student, subject, or keyword...">
                 <select id="statusFilter" class="form-select">
                     <option value="all">All Status</option>
                     <option value="scheduled">Scheduled</option>
@@ -81,6 +87,12 @@
                     <option value="cancelled">Cancelled</option>
                     <option value="rejected">Rejected</option>
                 </select>
+                <label class="form-label filter-label" style="margin: 0;">From</label>
+                <input type="date" id="dateFromFilter" class="form-input">
+                <label class="form-label filter-label" style="margin: 0;">To</label>
+                <input type="date" id="dateToFilter" class="form-input">
+                <button class="action-btn secondary" onclick="resetHistoryFilters()">Reset</button>
+                <button class="action-btn primary" onclick="exportHistoryCSV()">Export CSV</button>
             </div>
 
             <div class="content-card">
@@ -129,48 +141,69 @@
             }
         });
 
+        function currentHistoryFilters() {
+            return {
+                search: document.getElementById('searchInput').value,
+                status: document.getElementById('statusFilter').value,
+                dateFrom: document.getElementById('dateFromFilter').value,
+                dateTo: document.getElementById('dateToFilter').value
+            };
+        }
+
         function renderHistory() {
-            const records = window.facultyFunctions.getRecords();
-            const requests = window.facultyFunctions.getAllRequests();
-            const statusFilter = document.getElementById('statusFilter').value;
-
-            // Combine records and requests into a unified history listing
-            const combined = [
-                ...records.map(r => ({
-                    student: r.student,
-                    subject: r.subject,
-                    date: r.date,
-                    time: r.time,
-                    status: r.status,
-                    detail: r.concerns || r.cancellationReason || ''
-                })),
-                ...requests.filter(r => r.status === 'pending' || r.status === 'scheduled' || r.status === 'rejected').map(r => ({
-                    student: r.student,
-                    subject: r.subject,
-                    date: r.preferredDate,
-                    time: r.preferredTime,
-                    status: r.status,
-                    detail: r.rejectionReason || r.concern
-                }))
-            ];
-
-            const filtered = statusFilter === 'all' ? combined : combined.filter(c => c.status === statusFilter);
+            const filtered = window.facultyFunctions.getSearchableHistory(currentHistoryFilters());
             document.getElementById('historyCount').textContent = filtered.length + ' consultation(s)';
 
-            document.getElementById('historyBody').innerHTML = filtered.length ? filtered.map(c => `
+            const tbody = document.getElementById('historyBody');
+            if (filtered.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">${window.ctIcon('note', 40)}</div>
+                                <div class="empty-state-title">No consultations found</div>
+                                <div class="empty-state-text">Try a different status, date range, or search term.</div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(c => `
                 <tr>
-                    <td>${c.student}</td>
-                    <td>${c.subject}</td>
-                    <td>${c.date}</td>
-                    <td>${c.time}</td>
-                    <td><span class="status-badge ${c.status}">${c.status.charAt(0).toUpperCase() + c.status.slice(1)}</span></td>
-                    <td>${c.detail || '—'}</td>
+                    <td>${escapeHtml(c.student)}</td>
+                    <td>${escapeHtml(c.subject)}</td>
+                    <td>${escapeHtml(c.date || '—')}</td>
+                    <td>${escapeHtml(c.time || '—')}</td>
+                    <td><span class="status-badge ${escapeHtml(c.status)}">${escapeHtml(c.status.charAt(0).toUpperCase() + c.status.slice(1))}</span></td>
+                    <td>${escapeHtml(c.detail) || '—'}</td>
                 </tr>
-            `).join('') : `<tr><td colspan="6" style="text-align:center; color: var(--color-text-tertiary);">No consultations found.</td></tr>`;
+            `).join('');
+        }
+
+        function resetHistoryFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('statusFilter').value = 'all';
+            document.getElementById('dateFromFilter').value = '';
+            document.getElementById('dateToFilter').value = '';
+            renderHistory();
+        }
+
+        function exportHistoryCSV() {
+            const rows = window.facultyFunctions.getSearchableHistory(currentHistoryFilters());
+            if (rows.length === 0) {
+                alert('No consultations match the current filters, so there is nothing to export.');
+                return;
+            }
+            window.facultyFunctions.downloadCSV('my-consultation-history.csv', window.facultyFunctions.toCSV({ rows: rows }));
         }
 
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('statusFilter').addEventListener('change', renderHistory);
+            document.getElementById('searchInput').addEventListener('input', renderHistory);
+            document.getElementById('dateFromFilter').addEventListener('change', renderHistory);
+            document.getElementById('dateToFilter').addEventListener('change', renderHistory);
             renderHistory();
         });
     </script>

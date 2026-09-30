@@ -86,7 +86,7 @@
                 </div>
                 <div class="stat-card admin">
                     <div class="stat-header">
-                        <div class="stat-icon warning">⏳</div>
+                        <div class="stat-icon warning"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h2M3 12h2M3 18h2"/></svg></div>
                     </div>
                     <div class="stat-value" id="pendingRequests">8</div>
                     <div class="stat-label">Pending Requests</div>
@@ -154,8 +154,8 @@
                 <div class="activity-item">
                     <div class="activity-dot"></div>
                     <div class="activity-content">
-                        <div class="activity-title">${item.action}</div>
-                        <div class="activity-meta">${item.user} · ${item.time}</div>
+                        <div class="activity-title">${escapeHtml(item.action)}</div>
+                        <div class="activity-meta">${escapeHtml(item.user)} · ${escapeHtml(item.time)}</div>
                     </div>
                 </div>
             `).join('');
