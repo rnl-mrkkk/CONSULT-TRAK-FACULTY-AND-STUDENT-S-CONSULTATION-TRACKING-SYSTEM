@@ -38,7 +38,7 @@
                 <div class="sidebar-user-avatar" id="sidebarInitials">JO</div>
                 <div class="sidebar-user-info">
                     <span class="sidebar-user-name" id="sidebarFacultyName">Mr. Jaafar Omar</span>
-                    <span class="sidebar-user-dept" id="sidebarFacultyDept">SOCS Faculty</span>
+                    <span class="sidebar-user-dept" id="sidebarFacultyDept">Faculty</span>
                 </div>
                 <svg class="sidebar-user-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
             </div>
@@ -647,10 +647,9 @@
             const initialsEl = document.getElementById('sidebarInitials');
             if (nameEl && me) nameEl.textContent = me;
             if (deptEl) {
-                try {
-                    const info = window.facultyFunctions.getFacultyInfo();
-                    if (info && info.department) deptEl.textContent = info.department;
-                } catch (e) { /* keep default */ }
+                // The sidebar shows the role, not the college. The account's own
+                // department (SOCS / SBM) is left to the rest of the app.
+                deptEl.textContent = 'Faculty';
             }
             if (initialsEl && me) {
                 initialsEl.textContent = me.split(/\s+/).filter(Boolean).slice(-2)

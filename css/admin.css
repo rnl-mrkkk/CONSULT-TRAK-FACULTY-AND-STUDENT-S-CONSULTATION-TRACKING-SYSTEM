@@ -99,3 +99,72 @@
     display: flex;
     gap: var(--space-xs);
 }
+
+/* Accounts grouped into one section per role */
+.account-section + .account-section {
+    border-top: 1px solid var(--color-border);
+}
+
+.account-section-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-md) var(--space-xl);
+    background: var(--color-surface-hover);
+    border-bottom: 1px solid var(--color-border-light);
+    border-left: 3px solid var(--color-border);
+}
+
+/* Each role keeps its own accent so the sections read apart at a glance */
+.account-section[data-role="faculty"] .account-section-header { border-left-color: var(--color-primary); }
+.account-section[data-role="student"] .account-section-header { border-left-color: var(--color-info); }
+.account-section[data-role="admin"] .account-section-header { border-left-color: var(--color-warning); }
+
+.account-section-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: var(--radius-sm);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-light);
+    color: var(--color-primary);
+    flex-shrink: 0;
+}
+
+.account-section[data-role="student"] .account-section-icon { color: var(--color-info); }
+.account-section[data-role="admin"] .account-section-icon { color: var(--color-warning); }
+
+.account-section-count {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    padding: 2px 10px;
+    border-radius: var(--radius-pill);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-light);
+    font-size: var(--font-size-sm);
+    font-weight: 700;
+    color: var(--color-text-secondary);
+}
+
+.account-section-title {
+    font-size: var(--font-size-sm);
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+    margin: 0;
+}
+
+.account-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: var(--space-xl);
+    text-align: center;
+}

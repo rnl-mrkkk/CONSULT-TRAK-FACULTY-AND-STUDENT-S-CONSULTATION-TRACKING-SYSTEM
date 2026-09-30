@@ -21,7 +21,7 @@ const STORAGE_KEYS = {
 // Bump this whenever the demo request data below changes. Browsers keep the
 // previously saved requests forever, so without this marker a visitor would
 // keep seeing the old statuses and never the updated demo data.
-const DEMO_SEED_VERSION = 2;
+const DEMO_SEED_VERSION = 4;
 
 
 // ========================================
@@ -163,9 +163,10 @@ const DEFAULT_AVAILABILITY = [
 const DEFAULT_REQUESTS = [
     {
         id: 1,
-        student: 'John Smith',
-        studentId: '2023-10021',
-        email: 'john.smith@dummy.com',
+        student: 'Ken Batumbakal',
+        studentId: 'SOCS-001',
+        email: 'ken.batumbakal@dummy.com',
+        department: 'SOCS',
         faculty: 'Mr. Jaafar Omar',
         subject: 'Course/Subject Requirements',
         concern: 'Need advice on electives for next semester and prerequisites for Senior Capstone Project.',
@@ -177,9 +178,10 @@ const DEFAULT_REQUESTS = [
     },
     {
         id: 2,
-        student: 'Emily Davis',
-        studentId: '2022-04512',
-        email: 'emily.davis@dummy.com',
+        student: 'Aica Tabayoyong',
+        studentId: 'SOCS-002',
+        email: 'aica.tabayoyong@dummy.com',
+        department: 'SOCS',
         faculty: 'Mr. Jaafar Omar',
         subject: 'Thesis / Capstone Advising',
         concern: 'Looking for guidance and feedback on the proposed database schema and system architecture for my thesis.',
@@ -191,9 +193,10 @@ const DEFAULT_REQUESTS = [
     },
     {
         id: 3,
-        student: 'Robert Garcia',
-        studentId: '2024-10892',
-        email: 'robert.garcia@dummy.com',
+        student: 'Renzy Amacho',
+        studentId: 'SOCS-003',
+        email: 'renzy.amacho@dummy.com',
+        department: 'SOCS',
         faculty: 'Mr. Jaafar Omar',
         subject: 'Academic Performance',
         concern: 'Struggling with binary search trees and recursion assignments. Requesting tutoring guidance.',
@@ -205,9 +208,10 @@ const DEFAULT_REQUESTS = [
     },
     {
         id: 4,
-        student: 'Amanda White',
-        studentId: '2023-08734',
-        email: 'amanda.white@dummy.com',
+        student: 'Timothy Alvarez',
+        studentId: 'SBM-001',
+        email: 'timothy.alvarez@dummy.com',
+        department: 'SBM',
         faculty: 'Mr. Jaafar Omar',
         subject: 'OJT / Internship Concern',
         concern: 'Need review of internship endorsement letter and company qualification criteria.',
@@ -219,9 +223,10 @@ const DEFAULT_REQUESTS = [
     },
     {
         id: 5,
-        student: 'David Lee',
-        studentId: '2023-01923',
-        email: 'david.lee@dummy.com',
+        student: 'Thea Lorenzo',
+        studentId: 'SBM-002',
+        email: 'thea.lorenzo@dummy.com',
+        department: 'SBM',
         faculty: 'Mr. Jaafar Omar',
         subject: 'Grades',
         concern: 'Inquiry regarding practical midterm exam scores and rubrics breakdown.',
@@ -232,9 +237,10 @@ const DEFAULT_REQUESTS = [
     },
     {
         id: 6,
-        student: 'Sarah Johnson',
-        studentId: '2022-03129',
-        email: 'sarah.johnson@dummy.com',
+        student: 'Zoe Tuazon',
+        studentId: 'SBM-003',
+        email: 'zoe.tuazon@dummy.com',
+        department: 'SBM',
         faculty: 'Mr. Jaafar Omar',
         subject: 'Thesis / Capstone Advising',
         concern: 'Requesting a final review of my Chapter 3 research methodology and testing instruments before submission.',
